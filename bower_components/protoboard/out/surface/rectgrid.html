@@ -1,0 +1,109 @@
+<html><head><base href="..">
+
+<link rel="import" href="third_party/di.html">
+
+<link rel="import" href="pbelement.html">
+<link rel="import" href="service/config.html">
+<link rel="import" href="surface/grid.html">
+<link rel="import" href="utils.html">
+
+<template id="main">
+  <style>::content > * {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+}
+
+.row {
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.tile {
+  width: 100px;
+  height: 100px;
+  position: relative;
+}</style>
+
+  <div id="root">
+    <div id="content"></div>
+  </div>
+</template>
+
+<template id="row">
+  <div class="row"></div>
+</template>
+
+<template id="tile">
+  <div class="tile">
+    <content></content>
+  </div>
+</template>
+
+<script>"use strict";
+
+var _createClass = (function () { function defineProperties(target, props) { for (var key in props) { var prop = props[key]; prop.configurable = true; if (prop.value) prop.writable = true; } Object.defineProperties(target, props); } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _inherits = function (subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; };
+
+var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
+
+DI.prefix("pb").constant("doc", document.currentScript.ownerDocument)["with"]("templateMain", ["=", function (doc) {
+  return doc.querySelector("template#main");
+}])["with"]("templateRow", ["=", function (doc) {
+  return doc.querySelector("template#row");
+}])["with"]("templateTile", ["=", function (doc) {
+  return doc.querySelector("template#tile");
+}]).bind("surface.RectGrid", ["=", "service.=", "surface.=", "=", "=", "=", function ($registry, Config, Grid, templateMain, templateRow, templateTile) {
+
+  var ATTR_ROW = "pb-row";
+  var ATTR_COL = "pb-col";
+  var EL_NAME = "pb-s-rectgrid";
+
+  var RectGrid = (function (_Grid) {
+    function RectGrid() {
+      _classCallCheck(this, RectGrid);
+
+      if (_Grid != null) {
+        _Grid.apply(this, arguments);
+      }
+    }
+
+    _inherits(RectGrid, _Grid);
+
+    _createClass(RectGrid, {
+      rootEl: {
+        get: function () {
+          return this.shadowRoot.querySelector("#content");
+        }
+      },
+      mainTemplate: {
+        get: function () {
+          return templateMain;
+        }
+      },
+      rowTemplate: {
+        get: function () {
+          return templateRow;
+        }
+      },
+      tileTemplate: {
+        get: function () {
+          return templateTile;
+        }
+      }
+    });
+
+    return RectGrid;
+  })(Grid);
+
+  Config.add(EL_NAME);
+  $registry.add(EL_NAME, RectGrid.prototype);
+
+  return RectGrid;
+}]);</script>
+</head><body></body></html>

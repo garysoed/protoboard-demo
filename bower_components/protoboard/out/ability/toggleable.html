@@ -1,0 +1,87 @@
+<html><head><base href="..">
+
+<link rel="import" href="ability/ability.html">
+<link rel="import" href="check.html">
+<link rel="import" href="third_party/di.html">
+<link rel="import" href="trigger/key.html">
+<link rel="import" href="utils.html">
+
+<script>"use strict";
+
+var _createComputedClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var prop = props[i]; prop.configurable = true; if (prop.value) prop.writable = true; Object.defineProperty(target, prop.key, prop); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(object, property, receiver) { var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc && desc.writable) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
+var _inherits = function (subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; };
+
+var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
+
+DI.prefix("pb").bind("ability.Toggleable", ["ability.=", "=", "trigger.=", "=", function (Ability, Check, Key, Utils) {
+  var __defaultEnabled__ = Symbol();
+  var __defaultActive__ = Symbol();
+
+  var __isEnabled__ = Symbol();
+  var __isActive__ = Symbol();
+
+  var Toggleable = (function (_Ability) {
+    function Toggleable() {
+      var name = arguments[0] === undefined ? "pb-toggleable" : arguments[0];
+      var defaultTrigger = arguments[1] === undefined ? new Key("t") : arguments[1];
+      var defaultConfig = arguments[2] === undefined ? { enabled: true, active: false } : arguments[2];
+
+      _classCallCheck(this, Toggleable);
+
+      _get(Object.getPrototypeOf(Toggleable.prototype), "constructor", this).call(this, name, defaultTrigger);
+
+      if (typeof defaultConfig === "boolean") {
+        this[__defaultEnabled__] = defaultConfig;
+        this[__defaultActive__] = false;
+      } else {
+        this[__defaultEnabled__] = defaultConfig.enabled;
+        this[__defaultActive__] = defaultConfig.active;
+      }
+    }
+
+    _inherits(Toggleable, _Ability);
+
+    _createComputedClass(Toggleable, [{
+      key: __isEnabled__,
+      value: function (el) {
+        return Check($(el).attr(this.attrName)).isBoolean().orThrows();
+      }
+    }, {
+      key: __isActive__,
+      value: function (el) {
+        return Check($(el).attr(this.attrActive)).isBoolean().orThrows();
+      }
+    }, {
+      key: "init",
+      value: function init(el) {
+        _get(Object.getPrototypeOf(Toggleable.prototype), "init", this).call(this, el);
+        if ($(el).attr(this.attrName) === undefined) {
+          $(el).attr(this.attrName, this[__defaultEnabled__]);
+        }
+
+        if ($(el).attr(this.attrActive) === undefined) {
+          $(el).attr(this.attrActive, this[__defaultActive__]);
+        }
+      }
+    }, {
+      key: "doTrigger",
+      value: function doTrigger(el) {
+        if (this[__isEnabled__](el)) {
+          $(el).attr(this.attrActive, !this[__isActive__](el));
+        }
+      }
+    }, {
+      key: "attrActive",
+      get: function () {
+        return "" + this.attrName + "-active";
+      }
+    }]);
+
+    return Toggleable;
+  })(Ability);
+
+  return Toggleable;
+}]);</script></head><body></body></html>

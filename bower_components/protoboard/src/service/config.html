@@ -1,0 +1,37 @@
+<base href="..">
+
+<link rel="import" href="ability/abilities.html">
+<link rel="import" href="third_party/di.html">
+
+<script>
+DI
+    .prefix('pb')
+    .bind('service.Config', ['ability.=', (Abilities) => {
+  const configuration = {};
+
+  const Config = {
+    add(elementName, ...abilities) {
+      if (!configuration[elementName]) {
+        configuration[elementName] = new Map();
+      }
+
+      abilities.forEach(ability => {
+        configuration[elementName].set(ability.attrName, ability);
+      });
+    },
+
+    init(elName, proto) {
+      let builder = Abilities.of(proto);
+      if (!configuration[elName]) {
+        console.warn(`No configuration for ${elName}`);
+        return;
+      }
+      configuration[elName].forEach(ability => {
+        builder.add(ability);
+      });
+    }
+  };
+
+  return Config;
+}]);
+</script>

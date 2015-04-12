@@ -1,0 +1,111 @@
+<html><head><base href=".">
+
+<link rel="import" href="third_party/di.html">
+<link rel="import" href="utils.html">
+
+<script>"use strict";
+
+var _createComputedClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var prop = props[i]; prop.configurable = true; if (prop.value) prop.writable = true; Object.defineProperty(target, prop.key, prop); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
+
+DI.prefix("pb").bind("Check", ["=", function (Utils) {
+  var __checked__ = Symbol();
+  var __input__ = Symbol();
+  var __value__ = Symbol();
+
+  var __onFailure__ = Symbol();
+  var __onSuccess__ = Symbol();
+
+  var Check = (function () {
+    function Check(input) {
+      var value = arguments[1] === undefined ? undefined : arguments[1];
+      var checked = arguments[2] === undefined ? [] : arguments[2];
+
+      _classCallCheck(this, Check);
+
+      this[__checked__] = checked;
+      this[__input__] = input;
+      this[__value__] = value;
+    }
+
+    _createComputedClass(Check, [{
+      key: __onFailure__,
+      value: function (checked) {
+        return new Check(this[__input__], this[__value__], this[__checked__].concat(checked));
+      }
+    }, {
+      key: __onSuccess__,
+      value: function (value) {
+        if (this[__value__] === undefined) {
+          return new Check(this[__input__], value);
+        } else {
+          return new Check(this[__input__], this[__value__]);
+        }
+      }
+    }, {
+      key: "isInt",
+      value: function isInt() {
+        var radix = arguments[0] === undefined ? 10 : arguments[0];
+
+        var output = Number.parseInt(this[__input__], radix);
+        if (Number.isNaN(output)) {
+          return this[__onFailure__]("int(radix = " + radix + ")");
+        }
+
+        return this[__onSuccess__](output);
+      }
+    }, {
+      key: "isBoolean",
+      value: function isBoolean() {
+        if (typeof this[__input__] !== "string") {
+          return this[__onFailure__]("boolean");
+        } else if (this[__input__].toLowerCase() === "true") {
+          return this[__onSuccess__](true);
+        } else if (this[__input__].toLowerCase() === "false") {
+          return this[__onSuccess__](false);
+        } else {
+          return this[__onFailure__]("boolean");
+        }
+      }
+    }, {
+      key: "isList",
+      value: function isList() {
+        var separator = arguments[0] === undefined ? " " : arguments[0];
+
+        if (typeof this[__input__] !== "string") {
+          return this[__onFailure__]("list");
+        }
+
+        return this[__onSuccess__](this[__input__].split(separator).filter(function (str) {
+          return str.length > 0;
+        }));
+      }
+    }, {
+      key: "orThrows",
+      value: function orThrows(msg) {
+        if (this[__value__] === undefined) {
+          if (!msg) {
+            msg = "Illegal Exception. Checked: " + this[__checked__].join(", ") + " " + ("but was " + this[__input__]);
+          }
+          throw new Error(msg);
+        } else {
+          return this[__value__];
+        }
+      }
+    }, {
+      key: "orUse",
+      value: function orUse(backup) {
+        return this[__value__] === undefined ? backup : this[__value__];
+      }
+    }]);
+
+    return Check;
+  })();
+
+  function check(input) {
+    return new Check(input);
+  }
+
+  return check;
+}]);</script></head><body></body></html>

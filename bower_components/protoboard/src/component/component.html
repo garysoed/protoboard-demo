@@ -1,0 +1,28 @@
+<base href="..">
+
+<link rel="import" href="pbelement.html">
+<link rel="import" href="third_party/di.html">
+<link rel="import" href="utils.html">
+
+<script>
+DI
+    .prefix('pb')
+    .bind('component.Component', ['=', '=', (PbElement, Utils) => {
+
+  /**
+   * Base class for all components.
+   *
+   * @class component.Component
+   * @extends PbElement
+   */
+  class Component extends PbElement {
+
+    createdCallback() {
+      super.createdCallback();
+    }
+  }
+
+  return Component;
+}]);
+
+</script>

@@ -1,0 +1,160 @@
+<html><head><base href="..">
+
+<link rel="import" href="ability/abilities.html">
+<link rel="import" href="ability/ability.html">
+<link rel="import" href="third_party/di.html">
+<link rel="import" href="third_party/events.html">
+<link rel="import" href="trigger/key.html">
+<link rel="import" href="utils.html">
+
+<template>
+  <style>#root {
+  color: white;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0,0,0,0.8);
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+}
+
+content::content div {
+  color: white;
+  font-size: 1rem;
+  line-height: 2em;
+  text-transform: capitalize;
+}
+
+content::content div.trigger {
+  display: inline-block;
+  font-weight: bold;
+  width: 60px;
+  text-align: right;
+  -webkit-margin-after: 6px;
+}
+
+content::content div.entry {
+  width: 120px;
+}
+
+footer {
+  margin-top: 75px;
+  font-size: 0.75rem;
+}</style>
+
+  <div id="root">
+    <header>
+      <content select="h1"></content>
+    </header>
+    <div>
+      <content select="div"></content>
+    </div>
+    <footer>Click anywhere to close this</footer>
+  </div>
+</template>
+
+<script>"use strict";
+
+var _slicedToArray = function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { var _arr = []; for (var _iterator = arr[Symbol.iterator](), _step; !(_step = _iterator.next()).done;) { _arr.push(_step.value); if (i && _arr.length === i) break; } return _arr; } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } };
+
+var _createClass = (function () { function defineProperties(target, props) { for (var key in props) { var prop = props[key]; prop.configurable = true; if (prop.value) prop.writable = true; } Object.defineProperties(target, props); } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(object, property, receiver) { var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc && desc.writable) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
+var _inherits = function (subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; };
+
+var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
+
+DI.prefix("pb").constant("doc", document.currentScript.ownerDocument)["with"]("template", ["=", function (doc) {
+  return doc.querySelector("template");
+}]).bind("ability.Helpable", ["ability.=", "ability.=", "=", "trigger.=", "=", "=", "=", "=", function (Abilities, Ability, Events, Key, Utils, doc, template, $registry) {
+
+  var displayEl = null;
+
+  var Helpable = (function (_Ability) {
+    function Helpable() {
+      var name = arguments[0] === undefined ? "pb-helpable" : arguments[0];
+      var defaultTrigger = arguments[1] === undefined ? new Key("?") : arguments[1];
+
+      _classCallCheck(this, Helpable);
+
+      _get(Object.getPrototypeOf(Helpable.prototype), "constructor", this).call(this, name, defaultTrigger);
+    }
+
+    _inherits(Helpable, _Ability);
+
+    _createClass(Helpable, {
+      doTrigger: {
+        value: function doTrigger(el) {
+          var abilities = Abilities.of(el).getAll();
+          displayEl.innerHTML = "";
+
+          var doc = displayEl.ownerDocument;
+
+          var headerEl = doc.createElement("h1");
+          headerEl.innerText = el.nodeName;
+          displayEl.appendChild(headerEl);
+
+          var _iteratorNormalCompletion = true;
+          var _didIteratorError = false;
+          var _iteratorError = undefined;
+
+          try {
+            for (var _iterator = abilities[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+              var _step$value = _slicedToArray(_step.value, 2);
+
+              var _name = _step$value[0];
+              var ability = _step$value[1];
+
+              var entry = doc.createElement("div");
+              entry.classList.add("entry");
+              entry.innerHTML = "<div class=\"trigger\">" + ability.getTrigger(el).helpText + "</div>: " + _name;
+              displayEl.appendChild(entry);
+            }
+          } catch (err) {
+            _didIteratorError = true;
+            _iteratorError = err;
+          } finally {
+            try {
+              if (!_iteratorNormalCompletion && _iterator["return"]) {
+                _iterator["return"]();
+              }
+            } finally {
+              if (_didIteratorError) {
+                throw _iteratorError;
+              }
+            }
+          }
+
+          displayEl.style.display = "";
+        }
+      }
+    });
+
+    return Helpable;
+  })(Ability);
+
+  $registry.runAtRegister(function (document, config) {
+    displayEl = document.createElement("div");
+    displayEl.createShadowRoot().appendChild(Utils.activateTemplate(template, doc));
+    displayEl.style.display = "none";
+    Events.of(displayEl).on("dom", "click", function () {
+      displayEl.style.display = "none";
+    });
+    document.body.appendChild(displayEl);
+  });
+
+  return Helpable;
+}]);</script></head><body></body></html>

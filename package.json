@@ -1,0 +1,32 @@
+{
+  "name": "protoboard-demo",
+  "version": "1.0.0",
+  "description": "Demo for protoboard components",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/garysoed/protoboard-demo.git"
+  },
+  "keywords": [
+    "protoboard",
+    "demo"
+  ],
+  "author": "garysoed@gmail.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/garysoed/protoboard-demo/issues"
+  },
+  "homepage": "https://github.com/garysoed/protoboard-demo",
+  "devDependencies": {
+    "bower": "^1.4.1",
+    "chalk": "^1.0.0",
+    "gulp": "^3.8.11",
+    "gulp-debug": "^2.0.1",
+    "gulp-hub": "^0.7.0",
+    "gulp-myth": "^1.0.2",
+    "gulp-plumber": "^1.0.0"
+  }
+}

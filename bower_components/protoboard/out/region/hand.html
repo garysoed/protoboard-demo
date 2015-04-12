@@ -1,0 +1,168 @@
+<html><head><base href="..">
+
+<link rel="import" href="ability/abilities.html">
+<link rel="import" href="ability/droppable.html">
+<link rel="import" href="ability/helpable.html">
+<link rel="import" href="check.html">
+<link rel="import" href="region/region.html">
+<link rel="import" href="service/config.html">
+<link rel="import" href="service/move.html">
+<link rel="import" href="third_party/di.html">
+<link rel="import" href="trigger/key.html">
+<link rel="import" href="utils.html">
+
+<template>
+  <style>#root {
+  border: 1px solid #8982B8;
+  position: relative;
+}
+
+#content {
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-justify-content: space-between;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  overflow: hidden;
+}
+
+::content > *:hover {
+  -webkit-filter: drop-shadow(0px 2px 5px rgba(#50468F, 1));
+  filter: drop-shadow(0px 2px 5px rgba(#50468F, 1));
+}
+
+::content > *:last-child {
+  -webkit-flex-shrink: 0;
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+}</style>
+
+  <div id="root">
+    <div id="content">
+      <content></content>
+    </div>
+  </div>
+</template>
+
+<script>"use strict";
+
+var _createClass = (function () { function defineProperties(target, props) { for (var key in props) { var prop = props[key]; prop.configurable = true; if (prop.value) prop.writable = true; } Object.defineProperties(target, props); } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(object, property, receiver) { var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc && desc.writable) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
+var _inherits = function (subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; };
+
+var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
+
+DI.prefix("pb").constant("doc", document.currentScript.ownerDocument)["with"]("template", ["=", function (doc) {
+  return doc.querySelector("template");
+}]).bind("region.Hand", ["=", "ability.=", "=", "service.=", "ability.=", "ability.=", "trigger.=", "service.=", "region.=", "=", "=", "=", function ($registry, Abilities, Check, Config, Droppable, Helpable, Key, Move, Region, Utils, doc, template) {
+
+  var EL_NAME = "pb-r-hand";
+
+  var ReorderableDroppable = (function (_Droppable) {
+    function ReorderableDroppable() {
+      var name = arguments[0] === undefined ? "pb-droppable" : arguments[0];
+      var defaultTrigger = arguments[1] === undefined ? new Key("d") : arguments[1];
+      var defaultEnabled = arguments[2] === undefined ? true : arguments[2];
+
+      _classCallCheck(this, ReorderableDroppable);
+
+      _get(Object.getPrototypeOf(ReorderableDroppable.prototype), "constructor", this).call(this, name, defaultTrigger, defaultEnabled);
+    }
+
+    _inherits(ReorderableDroppable, _Droppable);
+
+    _createClass(ReorderableDroppable, {
+      doTrigger: {
+        value: function doTrigger(el) {
+          if (Check($(el).attr(this.attrName)).isBoolean().orThrows()) {
+            var movedElement = Move.movedElements.values().next().value;
+            if (movedElement) {
+              var dropped = false;
+              var _iteratorNormalCompletion = true;
+              var _didIteratorError = false;
+              var _iteratorError = undefined;
+
+              try {
+                for (var _iterator = Utils.toArray(el.children)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                  var child = _step.value;
+
+                  var rect = child.getBoundingClientRect();
+                  if (!dropped && rect.left + rect.width / 2 > Move.mouseX) {
+                    dropped = true;
+                    el.insertBefore(movedElement, child);
+                  }
+                }
+              } catch (err) {
+                _didIteratorError = true;
+                _iteratorError = err;
+              } finally {
+                try {
+                  if (!_iteratorNormalCompletion && _iterator["return"]) {
+                    _iterator["return"]();
+                  }
+                } finally {
+                  if (_didIteratorError) {
+                    throw _iteratorError;
+                  }
+                }
+              }
+
+              if (!dropped) {
+                el.appendChild(movedElement);
+              }
+            }
+          }
+        }
+      }
+    });
+
+    return ReorderableDroppable;
+  })(Droppable);
+
+  var Hand = (function (_Region) {
+    function Hand() {
+      _classCallCheck(this, Hand);
+
+      if (_Region != null) {
+        _Region.apply(this, arguments);
+      }
+    }
+
+    _inherits(Hand, _Region);
+
+    _createClass(Hand, {
+      createdCallback: {
+        value: function createdCallback() {
+          _get(Object.getPrototypeOf(Hand.prototype), "createdCallback", this).call(this);
+          this.createShadowRoot().appendChild(Utils.activateTemplate(template, doc));
+
+          this.attachedCallback();
+        }
+      },
+      attachedCallback: {
+        value: function attachedCallback() {
+          _get(Object.getPrototypeOf(Hand.prototype), "attachedCallback", this).call(this);
+        }
+      },
+      detachedCallback: {
+        value: function detachedCallback() {
+          _get(Object.getPrototypeOf(Hand.prototype), "detachedCallback", this).call(this);
+        }
+      }
+    });
+
+    return Hand;
+  })(Region);
+
+  Config.add(EL_NAME, new Helpable("help"), new ReorderableDroppable("drop", new Key("d"), true));
+  $registry.add(EL_NAME, Hand.prototype);
+
+  if (window.TEST_MODE) {
+    Hand.ReorderableDroppable = ReorderableDroppable;
+  }
+
+  return Hand;
+}]);</script></head><body></body></html>
