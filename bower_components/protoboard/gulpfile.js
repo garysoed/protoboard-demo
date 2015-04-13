@@ -13,7 +13,7 @@ var chalk    = require('chalk');
 var karma    = require('karma').server;
 var minimist = require('minimist');
 var through  = require('through2');
-var path     = require('path');
+var loadtheme = require('./loadtheme');
 
 var options = minimist(process.argv.slice(2), {
   'string': 'theme',
@@ -69,27 +69,10 @@ function subBabel() {
   });
 }
 
-function readJsonTheme(file) {
-  var json = require(file);
-  var base;
-  if (json.base) {
-    var basePath = file[0] === '/'
-        ? path.join(path.dirname(file), json.base)
-        : path.join(__dirname, path.dirname(file), json.base);
-    base = readJsonTheme(basePath);
-  } else {
-    base = {};
-  }
-  for (var key in json.vars) {
-    base[key] = json.vars[key];
-  }
-  return base;
-}
-
 function subMyth() {
   return chain(function(stream) {
     return stream
-        .pipe(myth({ 'variables': readJsonTheme(options.theme) }));
+        .pipe(myth({ 'variables': loadtheme(options.theme) }));
   })
 }
 
@@ -100,13 +83,6 @@ function subMythHtml() {
         .pipe(styleSubs.extract)
             .pipe(subMyth())
         .pipe(styleSubs.inject);
-  });
-}
-
-function subSass() {
-  return chain(function(stream) {
-    return stream
-        .pipe(sass({loadPath: ['src/themes']}));
   });
 }
 
@@ -152,12 +128,6 @@ gulp.task('src', ['jshint', 'copy'], function() {
       .pipe(gulp.dest('out'));
 });
 
-gulp.task('ex', ['src'], function() {
-  return gulp.src('./ex/**/*.css')
-      .pipe(subMyth())
-      .pipe(gulp.dest('out/ex'));
-});
-
 gulp.task('test', ['jshint'], function() {
   return gulp.src(['./test/**/*_test.html', './test/testbase.html'])
       .pipe(subBabel())
@@ -200,8 +170,8 @@ gulp.task('watch', ['compile'], function() {
   });
 });
 
-gulp.task('compile', ['src', 'test', 'ex']);
-gulp.task('pack', ['src', 'ex'], function() {
+gulp.task('compile', ['src', 'test']);
+gulp.task('pack', ['src', 'check'], function() {
   return gulp.src('out/**/*')
       .pipe(zip('bin.zip'))
       .pipe(gulp.dest('dist'));

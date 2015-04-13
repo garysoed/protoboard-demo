@@ -18,5 +18,8 @@
     "bower_components",
     "test",
     "tests"
-  ]
+  ],
+  "dependencies": {
+    "protoboard": "~0.2.1"
+  }
 }

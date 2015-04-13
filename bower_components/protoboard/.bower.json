@@ -1,6 +1,6 @@
 {
   "name": "protoboard",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "homepage": "https://github.com/garysoed/protoboard",
   "main": "out/main.html",
   "authors": [
@@ -28,14 +28,14 @@
     "game",
     "prototype"
   ],
-  "_release": "0.2.0",
+  "_release": "0.2.1",
   "_resolution": {
     "type": "version",
-    "tag": "0.2.0",
-    "commit": "42c4d96404fb2401203450228d0d0032125d23bb"
+    "tag": "v0.2.1",
+    "commit": "fbe833e0827128754ba9634674e4fcd405825d6b"
   },
   "_source": "git://github.com/garysoed/protoboard.git",
-  "_target": "~0.2.0",
+  "_target": "~0.2.1",
   "_originalSource": "protoboard",
   "_direct": true
 }

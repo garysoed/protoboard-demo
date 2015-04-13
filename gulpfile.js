@@ -7,6 +7,7 @@ var myth = require('gulp-myth');
 var chalk   = require('chalk');
 var through = require('through2');
 var path    = require('path');
+var loadtheme = require('./bower_components/protoboard/loadtheme');
 
 function chain(fn) {
   return through.obj(function(file, enc, callback) {
@@ -31,27 +32,10 @@ function chain(fn) {
   });
 }
 
-function readJsonTheme(file) {
-  var json = require(file);
-  var base;
-  if (json.base) {
-    var basePath = file[0] === '/'
-        ? path.join(path.dirname(file), json.base)
-        : path.join(__dirname, path.dirname(file), json.base);
-    base = readJsonTheme(basePath);
-  } else {
-    base = {};
-  }
-  for (var key in json.vars) {
-    base[key] = json.vars[key];
-  }
-  return base;
-}
-
 function subMyth() {
   return chain(function(stream) {
     return stream
-        .pipe(myth({ 'variables': readJsonTheme('./theme.json') }));
+        .pipe(myth({ 'variables': loadtheme(__dirname + '/theme.json') }));
   })
 }
 
