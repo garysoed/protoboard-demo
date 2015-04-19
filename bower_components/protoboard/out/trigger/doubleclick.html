@@ -1,0 +1,57 @@
+<html><head><base href="..">
+
+<link rel="import" href="third_party/di.html">
+<link rel="import" href="trigger/trigger.html">
+
+<script>"use strict";
+
+var _createClass = (function () { function defineProperties(target, props) { for (var key in props) { var prop = props[key]; prop.configurable = true; if (prop.value) prop.writable = true; } Object.defineProperties(target, props); } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _inherits = function (subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; };
+
+var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
+
+DI.prefix("pb").bind("trigger.DoubleClick", ["=", "trigger.=", function (Events, Trigger) {
+  var DoubleClick = (function (_Trigger) {
+    function DoubleClick() {
+      _classCallCheck(this, DoubleClick);
+
+      if (_Trigger != null) {
+        _Trigger.apply(this, arguments);
+      }
+    }
+
+    _inherits(DoubleClick, _Trigger);
+
+    _createClass(DoubleClick, {
+      on: {
+        value: function on(element, ability) {
+          Events.of(element, this).on("hammer", "doubletap", ability.trigger.bind(ability, element));
+        }
+      },
+      off: {
+        value: function off(element) {
+          Events.of(element, this).off("hammer", "doubletap");
+        }
+      },
+      toString: {
+        value: function toString() {
+          return "pb-dblclick";
+        }
+      },
+      helpText: {
+        get: function () {
+          return "Double Click";
+        }
+      }
+    });
+
+    return DoubleClick;
+  })(Trigger);
+
+  DoubleClick.parse = function (str) {
+    return str === "pb-dblclick" ? new DoubleClick() : undefined;
+  };
+
+  return DoubleClick;
+}]);</script></head><body></body></html>

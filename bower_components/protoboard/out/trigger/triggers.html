@@ -1,0 +1,54 @@
+<html><head><base href="..">
+
+<link rel="import" href="third_party/di.html">
+<link rel="import" href="trigger/click.html">
+<link rel="import" href="trigger/key.html">
+
+<script>"use strict";
+
+var _createClass = (function () { function defineProperties(target, props) { for (var key in props) { var prop = props[key]; prop.configurable = true; if (prop.value) prop.writable = true; } Object.defineProperties(target, props); } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
+
+DI.prefix("pb.trigger").bind("Triggers", ["=", "=", function (Click, Key) {
+  var __observer__ = Symbol();
+  var __target__ = Symbol();
+  var __triggers__ = Symbol();
+
+  var __onMutation__ = Symbol();
+
+  var Registrar = (function () {
+    function Registrar(target) {
+      _classCallCheck(this, Registrar);
+
+      this[__target__] = target;
+    }
+
+    _createClass(Registrar, {
+      add: {
+        value: function add(trigger) {
+          if (!this[__target__][__triggers__]) {
+            this[__target__][__triggers__] = new Map();
+          }
+          this[__target__][__triggers__].set(trigger.attrName, trigger);
+          return this;
+        }
+      }
+    });
+
+    return Registrar;
+  })();
+
+  var Triggers = {
+    parse: function parse(str) {
+      var trigger = Click.parse(str) || Key.parse(str);
+
+      if (!trigger) {
+        throw "Unparsable trigger string: " + str;
+      }
+      return trigger;
+    }
+  };
+
+  return Triggers;
+}]);</script></head><body></body></html>

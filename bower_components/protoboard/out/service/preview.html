@@ -1,0 +1,40 @@
+<html><head><base href="..">
+
+<link rel="import" href="utils.html">
+
+<script>"use strict";
+
+var _defineProperty = function (obj, key, value) { return Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); };
+
+DI.prefix("pb").bind("service.Preview", ["=", function (Utils) {
+  var __previewedEl__ = Symbol();
+
+  var Preview = Object.defineProperties((function () {
+    var _Object$defineProperties = {};
+
+    _defineProperty(_Object$defineProperties, __previewedEl__, null);
+
+    _defineProperty(_Object$defineProperties, "Events", {
+      ELEMENT_CHANGED: "element-changed"
+    });
+
+    return _Object$defineProperties;
+  })(), {
+    previewedEl: {
+      get: function () {
+        return this[__previewedEl__];
+      },
+      set: function (el) {
+        var changed = this[__previewedEl__] !== el;
+        this[__previewedEl__] = el;
+        if (changed) {
+          $(this).trigger(Preview.Events.ELEMENT_CHANGED);
+        }
+      },
+      configurable: true,
+      enumerable: true
+    }
+  });
+
+  return Preview;
+}]);</script></head><body></body></html>

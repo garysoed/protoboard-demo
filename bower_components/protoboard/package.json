@@ -1,0 +1,45 @@
+{
+  "name": "protoboard",
+  "version": "0.2.2",
+  "description": "Library to make prototyping board games easier",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/garysoed/protoboard.git"
+  },
+  "author": "garysoed@gmail.com",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/garysoed/protoboard/issues"
+  },
+  "homepage": "https://github.com/garysoed/protoboard",
+  "devDependencies": {
+    "chai": "^1.9.2",
+    "chalk": "^0.5.1",
+    "gulp": "^3.8.10",
+    "gulp-babel": "^4.0.0",
+    "gulp-debug": "^2.0.0",
+    "gulp-html-subs": "git://github.com/garysoed/gulp-html-subs",
+    "gulp-jshint": "^1.9.0",
+    "gulp-myth": "^1.0.2",
+    "gulp-plumber": "^0.6.6",
+    "gulp-shell": "^0.2.11",
+    "gulp-zip": "^2.0.3",
+    "jshint-stylish": "^1.0.0",
+    "karma": "^0.12.24",
+    "karma-chrome-launcher": "^0.1.5",
+    "karma-mocha": "^0.1.9",
+    "karma-mocha-reporter": "^0.3.1",
+    "minimist": "^1.1.0",
+    "mocha": "^2.0.0",
+    "spies": "git://github.com/garysoed/spies.git",
+    "through2": "^0.6.3"
+  },
+  "dependencies": {
+    "di-js": "^1.0.2",
+    "listener": "git://github.com/garysoed/listener"
+  }
+}

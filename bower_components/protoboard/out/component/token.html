@@ -1,0 +1,67 @@
+<html><head><base href="..">
+
+<link rel="import" href="ability/helpable.html">
+<link rel="import" href="ability/pickable.html">
+<link rel="import" href="component/component.html">
+<link rel="import" href="service/config.html">
+<link rel="import" href="third_party/di.html">
+<link rel="import" href="trigger/key.html">
+<link rel="import" href="utils.html">
+
+<template>
+  <style>:host(.pb-dragged) .pb-back {
+  -webkit-filter: drop-shadow(0px 2px 5px rgba(#50468F, 1));
+  filter: drop-shadow(0px 2px 5px rgba(#50468F, 1));
+  z-index: 1;
+}</style>
+
+  <div id="root">
+    <content></content>
+  </div>
+</template>
+
+<script>"use strict";
+
+var _createClass = (function () { function defineProperties(target, props) { for (var key in props) { var prop = props[key]; prop.configurable = true; if (prop.value) prop.writable = true; } Object.defineProperties(target, props); } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(object, property, receiver) { var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc && desc.writable) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
+var _inherits = function (subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; };
+
+var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
+
+DI.prefix("pb").constant("doc", document.currentScript.ownerDocument)["with"]("template", ["=", function (doc) {
+  return doc.querySelector("template");
+}]).bind("component.Token", ["=", "component.=", "service.=", "ability.=", "trigger.=", "ability.=", "=", "=", "=", function ($registry, Component, Config, Helpable, Key, Pickable, Utils, doc, template) {
+
+  var EL_NAME = "pb-c-token";
+
+  var Token = (function (_Component) {
+    function Token() {
+      _classCallCheck(this, Token);
+
+      if (_Component != null) {
+        _Component.apply(this, arguments);
+      }
+    }
+
+    _inherits(Token, _Component);
+
+    _createClass(Token, {
+      createdCallback: {
+        value: function createdCallback() {
+          _get(Object.getPrototypeOf(Token.prototype), "createdCallback", this).call(this);
+          this.createShadowRoot().appendChild(Utils.activateTemplate(template, doc));
+        }
+      }
+    });
+
+    return Token;
+  })(Component);
+
+  Config.add("pb-c-token", new Helpable("help"), new Pickable("pick", new Key("q"), true));
+
+  $registry.add(EL_NAME, Token.prototype);
+
+  return Token;
+}]);</script></head><body></body></html>
