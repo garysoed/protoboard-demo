@@ -1,0 +1,49 @@
+{
+  "name": "listener",
+  "version": "0.1.0",
+  "description": "Easy way to register / unregister listeners",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/garysoed/listener.git"
+  },
+  "keywords": [
+    "js",
+    "listener"
+  ],
+  "author": "garysoed@gmail.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/garysoed/listener/issues"
+  },
+  "homepage": "https://github.com/garysoed/listener",
+  "devDependencies": {
+    "babelify": "^6.0.2",
+    "browserify": "^9.0.7",
+    "chai": "^1.10.0",
+    "chalk": "^1.0.0",
+    "gulp": "^3.8.11",
+    "gulp-babel": "^5.1.0",
+    "gulp-debug": "^2.0.1",
+    "gulp-html-subs": "git://github.com/garysoed/gulp-html-subs",
+    "gulp-jshint": "^1.10.0",
+    "gulp-plumber": "^1.0.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-shell": "^0.4.0",
+    "gulp-uglify": "^1.1.0",
+    "jshint-stylish": "^1.0.1",
+    "karma": "^0.12.31",
+    "karma-chrome-launcher": "^0.1.7",
+    "karma-mocha": "^0.1.10",
+    "karma-mocha-reporter": "^1.0.2",
+    "minimist": "^1.1.1",
+    "mocha": "^2.2.4",
+    "spies": "git://github.com/garysoed/spies",
+    "through2": "^0.6.3",
+    "traceur": "0.0.72",
+    "yuidocjs": "^0.6.0"
+  }
+}

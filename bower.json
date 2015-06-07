@@ -21,5 +21,8 @@
   ],
   "dependencies": {
     "protoboard": "~0.2.2"
+  },
+  "resolutions": {
+    "protoboard": "~0.3.0"
   }
 }

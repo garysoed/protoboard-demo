@@ -1,0 +1,29 @@
+{
+  "name": "listener",
+  "homepage": "https://github.com/garysoed/listener",
+  "authors": [
+    "garysoed@gmail.com"
+  ],
+  "keywords": [
+    "js",
+    "listener"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "out/*_test.html",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "_release": "d723579fff",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "d723579fff2743767f7572fce7cc0bad808f0eb5"
+  },
+  "_source": "git://github.com/garysoed/listener.git",
+  "_target": "*",
+  "_originalSource": "garysoed/listener"
+}

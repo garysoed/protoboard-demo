@@ -1,12 +1,19 @@
 <!DOCTYPE html>
 <html>
-  <base href=".">
+  <base href="./index">
   <head>
+    <script src="bower_components/protoboard/out/third_party/webcomponentsjs/webcomponents.js"></script>
+
+    <script>
+      window.HTMLImports.flags['load'] = true;
+    </script>
+
     <link rel="import" href="bower_components/protoboard/out/bootstrap.html">
     <link rel="import" href="bower_components/protoboard/out/component/card.html">
     <link rel="import" href="bower_components/protoboard/out/component/dice.html">
     <link rel="import" href="bower_components/protoboard/out/component/token.html">
     <link rel="import" href="bower_components/protoboard/out/region/bag.html">
+    <link rel="import" href="bower_components/protoboard/out/region/cubetower.html">
     <link rel="import" href="bower_components/protoboard/out/region/deck.html">
     <link rel="import" href="bower_components/protoboard/out/region/hand.html">
     <link rel="import" href="bower_components/protoboard/out/region/rect.html">
@@ -63,33 +70,33 @@
           <td>Cards</td>
           <td>
             <pb-c-card>
-              <div class="pb-front">
+              <div pb-front>
                 <p>Default - front</p>
                 <p>Previewer</p>
                 <pb-u-preview>
                   You can add more details over here. Look at the Previewer for more details.
                 </pb-u-preview>
               </div>
-              <div class="pb-back">
+              <div pb-back>
                 Default - back
               </div>
             </pb-c-card>
-            <pb-c-card tap-on="pb-key-t"
-                       flip-on="pb-key-f"
+            <pb-c-card tap-on="key-t"
+                       flip-on="key-f"
                        flip-active="true">
-              <div class="pb-front">
+              <div pb-front>
                 <p>Hover + f to flip</p>
                 <p>Defaults to show front</p>
               </div>
-              <div class="pb-back">
+              <div pb-back>
                 Hover + t to tap / untap
               </div>
             </pb-c-card>
             <pb-c-card>
-              <div class="pb-front">
+              <div pb-front>
                 Hover + ? for help
               </div>
-              <div class="pb-back"></div>
+              <div pb-back></div>
             </pb-c-card>
           </td>
           <td>
@@ -237,6 +244,13 @@
             </ul>
           </td>
         </tr>
+
+        <tr>
+          <td>Cube Tower</td>
+          <td>
+            <pb-r-cubetower drop-chances="0.3 0.3 0.3"></pb-r-cubetower>
+          </td>
+        </tr>
       </tbody>
 
       <thead>
@@ -251,7 +265,7 @@
         <tr>
           <td>Rectangle Grid</td>
           <td>
-            <pb-s-rectgrid pb-row="2" pb-col="2">
+            <pb-s-rectgrid row="2" col="2">
               <pb-r-deck pb-col="0" pb-row="0"></pb-r-deck>
               <pb-r-deck pb-col="1" pb-row="0"></pb-r-deck>
               <pb-r-deck pb-col="0" pb-row="1"></pb-r-deck>
@@ -271,7 +285,7 @@
         <tr>
           <td>Hex Grid</td>
           <td>
-            <pb-s-hexgrid pb-row="5" pb-col="3">
+            <pb-s-hexgrid row="5" col="3">
               <div pb-col="0" pb-row="0">
                 <pb-u-shape shape="hexagon"></pb-u-shape>
                 <pb-r-bag></pb-r-bag>
@@ -321,7 +335,7 @@
         <tr>
           <td>Triangle Grid</td>
           <td>
-            <pb-s-trianglegrid pb-row="3" pb-col="5">
+            <pb-s-trianglegrid row="3" col="5">
               <pb-u-generate>
                 <template>
                   {{#pb-for 0 3}}
@@ -402,8 +416,8 @@
     </table>
 
     <script>
-      DI.run(['pb.=', 'pb.service.=', function(Bootstrap, Template) {
-        Template
+      DI.run({ Bootstrap: 'pb.=', Template: 'pb.service.=' }, function($i) {
+        $i.Template
             .addPartial('card', document.querySelector('template#card'))
             .addData('cards', [
               { name: 'Mrs Peacock', color: 'blue' },
@@ -417,8 +431,8 @@
               name: 'Clue',
               year: 1949
             });
-        Bootstrap.run(document);
-      }]);
+        $i.Bootstrap.run(document);
+      });
 
       var headers = document.querySelectorAll('thead');
       for (var i = 0; i < headers.length; i++) {

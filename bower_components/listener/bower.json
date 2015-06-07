@@ -1,0 +1,21 @@
+{
+  "name": "listener",
+  "version": "0.1.0",
+  "homepage": "https://github.com/garysoed/listener",
+  "authors": [
+    "garysoed@gmail.com"
+  ],
+  "keywords": [
+    "js",
+    "listener"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "out/*_test.html",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

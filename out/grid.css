@@ -10,7 +10,7 @@ pb-r-deck[pb-col="1"][pb-row="1"] {
 }
 
 pb-s-hexgrid pb-r-bag {
-  position: absolute;
+  position: absolute !important;
   top: 0;
   left: 0;
   right: 0;

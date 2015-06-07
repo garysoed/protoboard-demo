@@ -1,0 +1,13 @@
+<html><head><base href=".">
+
+<script lang="es6">'use strict';
+
+window.t = {
+  getSymbol: function getSymbol(obj, name) {
+    var symbols = Object.getOwnPropertySymbols(obj);
+    return symbols.find(function (symbol) {
+      return 'Symbol(' + name + ')' === symbol.toString();
+    });
+  }
+};</script>
+</head><body></body></html>
