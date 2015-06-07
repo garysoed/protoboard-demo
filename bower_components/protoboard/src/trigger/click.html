@@ -1,0 +1,77 @@
+<base href="..">
+
+<link rel="import" href="trigger/trigger.html">
+<link rel="import" href="third_party/di.html">
+<link rel="import" href="third_party/events.html">
+
+<script>
+DI
+    .prefix('pb')
+    .bind('trigger.Click', { Events: '=', Trigger: 'trigger.=' }, $i => {
+
+  /**
+   * Triggers an ability when the element is clicked.
+   *
+   * @class trigger.Click
+   * @extends trigger.Trigger
+   */
+  class Click extends $i.Trigger {
+
+    /**
+     * Registers the given element to trigger the given ability when clicked.
+     *
+     * @method on
+     * @param {Element} element Element to register.
+     * @param {ability.Ability} ability The ability to trigger.
+     */
+    on(element, ability) {
+      $i.Events.of(element, this)
+          .on('hammer', 'singletap', ability.trigger.bind(ability, element));
+    }
+
+    /**
+     * Unregisters the given element from triggering the registered ability when clicked.
+     *
+     * @method off
+     * @param {Element} element Element to unregister.
+     */
+    off(element) {
+      $i.Events.of(element, this).off('hammer', 'singletap');
+    }
+
+    /**
+     * @method toString
+     * @return {string} String click
+     */
+    toString() {
+      return 'click';
+    }
+
+    /**
+     * The help text to be displayed by {{#crossLink "ability.Helpable"}}{{/crossLink}}.
+     *
+     * @property helpText
+     * @type string
+     * @final
+     */
+    get helpText() {
+      return 'Click';
+    }
+  }
+
+  /**
+   * Parses the input string
+   *
+   * @method parse
+   * @param {string} str The string to parse
+   * @return {trigger.Click|undefined} The Click trigger if parse is successful, or `undefined`
+   *    otherwise.
+   * @static
+   */
+  Click.parse = function(str) {
+    return (str === 'click') ? new Click() : undefined;
+  };
+
+  return Click;
+});
+</script>

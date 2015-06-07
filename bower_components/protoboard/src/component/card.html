@@ -1,0 +1,146 @@
+<base href="..">
+
+<link rel="import" href="ability/helpable.html">
+<link rel="import" href="ability/pickable.html">
+<link rel="import" href="ability/toggleable.html">
+<link rel="import" href="component/component.html">
+<link rel="import" href="service/config.html">
+<link rel="import" href="third_party/di.html">
+<link rel="import" href="trigger/click.html">
+<link rel="import" href="trigger/key.html">
+<link rel="import" href="utils.html">
+
+<template>
+  <style>
+    #root {
+      width: var(--card-width);
+      height: var(--card-height);
+      perspective: 800px;
+      position: relative;
+    }
+
+    #container {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      transform-style: preserve-3d;
+      transition: transform var(--transition-duration);
+      z-index: -1;
+    }
+
+    :host([tap-active="true"]) {
+      transform: rotateZ(90deg);
+    }
+
+    :host([tap="true"]) {
+      transition: transform var(--transition-duration);
+    }
+
+    :host([flip-active="true"])::shadow #container {
+      transform: rotateY(180deg);
+    }
+
+    ::content > div {
+      backface-visibility: hidden;
+      border-radius: 5px;
+      height: var(--card-height);
+      width: var(--card-width);
+    }
+
+    ::content [pb-back] {
+      background-color: var(--color-background-accent-dark);
+      border: var(--border);
+      box-sizing: border-box;
+    }
+
+    ::content [pb-front] {
+      background-color: var(--color-background-accent);
+      position: absolute;
+      transform: rotateY(180deg);
+      border: 5px solid var(--color-border);
+      box-sizing: border-box;
+    }
+  </style>
+
+  <div id="root">
+    <div id="container">
+      <content select="[pb-front]"></content>
+      <content select="[pb-back]"></content>
+    </div>
+  </div>
+</template>
+
+<script>
+DI
+    .prefix('pb')
+    .constant('doc', document.currentScript.ownerDocument)
+    .with('template', { doc: '=' }, $i => $i.doc.querySelector('template'))
+    .bind(
+        'component.Card',
+        {
+          $registry: '=',
+          doc: '=',
+          template: '=',
+          Click: 'trigger.=',
+          Component: 'component.=',
+          Config: 'service.=',
+          Helpable: 'ability.=',
+          Key: 'trigger.=',
+          Pickable: 'ability.=',
+          Toggleable: 'ability.=',
+          Utils: '=',
+        },
+        $i => {
+
+  const EL_NAME = 'pb-c-card';
+
+  /**
+   * A representation of a card. To use this, create a `pb-c-card` element with two child elements:
+   * - One must have a `pb-front` attribute. This is the front face of the card.
+   * - One must have a `pb-back` attribute. This is the back face of the card.
+   *
+   * By default, the card starts by showing its back. If you want to make it start by showing the
+   * front face, add `flippable-active="true"` to the `pb-c-card`.
+   *
+   * Default supported abilities:
+   * - {{#crossLink "ability.Pickable"}}pick{{/crossLink}}
+   * - {{#crossLink "ability.Toggleable"}}flip{{/crossLink}}
+   * - {{#crossLink "ability.Toggleable"}}tap{{/crossLink}}
+   *
+   * ```html
+   * <!-- Example: Create a card that starts by displaying its front side -->
+   * <pb-c-card flippable-active="true">
+   *   <div pb-front>Front side</div>
+   *   <div pb-back>Back side</div>
+   * </pb-c-card>
+   * ```
+   * @class component.Card
+   * @extends component.Component
+   */
+  class Card extends $i.Component {
+
+    /**
+     * Called when the element is created
+     *
+     * @method createdCallback
+     */
+    createdCallback() {
+      super.createdCallback();
+      this.createShadowRoot()
+          .appendChild($i.Utils.activateTemplate($i.template, $i.doc));
+      this.attachedCallback();
+    }
+  }
+
+  $i.Config.add(
+      EL_NAME,
+      new $i.Helpable('help'),
+      new $i.Pickable('pick', new $i.Key('q'), true),
+      new $i.Toggleable('flip', new $i.Click(), true),
+      new $i.Toggleable('tap', new $i.Key('t'), true));
+
+  $i.$registry.add(EL_NAME, Card.prototype);
+
+  return Card;
+});
+</script>

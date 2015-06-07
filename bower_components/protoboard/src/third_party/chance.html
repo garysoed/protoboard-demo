@@ -1,0 +1,24 @@
+<base href="..">
+
+<script src="third_party/chance/chance.js"></script>
+
+<link rel="import" href="third_party/di.html">
+
+<script>
+DI
+    .bind('pb.seed', {}, () => (new Date()).getTime())
+    .bind('Chance', { seed: 'pb.=?' }, $i => {
+      let chance = new Chance($i.seed);
+      chance.binom = (coll, options) => {
+        let picked = [];
+        coll.forEach(item => {
+          if (chance.bool(options)) {
+            picked.push(item);
+          }
+        });
+        return picked;
+      };
+
+      return chance;
+    });
+</script>

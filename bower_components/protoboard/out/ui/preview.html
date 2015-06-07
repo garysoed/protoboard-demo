@@ -1,0 +1,91 @@
+<html><head><base href="..">
+
+<link rel="import" href="pbelement.html">
+<link rel="import" href="service/config.html">
+<link rel="import" href="service/preview.html">
+<link rel="import" href="service/registry.html">
+<link rel="import" href="third_party/di.html">
+<link rel="import" href="third_party/events.html">
+<link rel="import" href="utils.html">
+
+<script>"use strict";
+
+var _createComputedClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var prop = props[i]; prop.configurable = true; if (prop.value) prop.writable = true; Object.defineProperty(target, prop.key, prop); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(object, property, receiver) { var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc && desc.writable) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
+var _inherits = function (subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; };
+
+var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
+
+DI.prefix("pb").bind("ui.Preview", {
+  Config: "service.=",
+  Events: "=",
+  PbElement: "=",
+  Preview: "service.=",
+  $registry: "=",
+  Utils: "="
+}, function ($i) {
+
+  var registered = false;
+
+  var EL_NAME = "pb-u-preview";
+
+  var __onMouseOver__ = Symbol();
+  var __onMouseOut__ = Symbol();
+
+  var PreviewElement = (function (_$i$PbElement) {
+    function PreviewElement() {
+      _classCallCheck(this, PreviewElement);
+
+      if (_$i$PbElement != null) {
+        _$i$PbElement.apply(this, arguments);
+      }
+    }
+
+    _inherits(PreviewElement, _$i$PbElement);
+
+    _createComputedClass(PreviewElement, [{
+      key: __onMouseOut__,
+      value: function () {
+        $i.Preview.previewedEl = null;
+      }
+    }, {
+      key: __onMouseOver__,
+      value: function () {
+        $i.Preview.previewedEl = this;
+      }
+    }, {
+      key: "createdCallback",
+      value: function createdCallback() {
+        _get(Object.getPrototypeOf(PreviewElement.prototype), "createdCallback", this).call(this);
+        this.createShadowRoot();
+        this.attachedCallback();
+      }
+    }, {
+      key: "attachedCallback",
+      value: function attachedCallback() {
+        _get(Object.getPrototypeOf(PreviewElement.prototype), "attachedCallback", this).call(this);
+        if (this.parentElement) {
+          $i.Events.of(this.parentElement, this).on("dom", "mouseenter", this[__onMouseOver__].bind(this)).on("dom", "mouseleave", this[__onMouseOut__].bind(this));
+        }
+      }
+    }, {
+      key: "detachedCallback",
+      value: function detachedCallback() {
+        if (this.parentElement) {
+          $i.Events.of(this.parentElement, this).off();
+        }
+        _get(Object.getPrototypeOf(PreviewElement.prototype), "detachedCallback", this).call(this);
+      }
+    }]);
+
+    return PreviewElement;
+  })($i.PbElement);
+
+  $i.Config.add(EL_NAME);
+  $i.$registry.add(EL_NAME, PreviewElement.prototype);
+
+  return PreviewElement;
+});</script>
+</head><body></body></html>

@@ -1,0 +1,126 @@
+<base href="..">
+
+<link rel="import" href="ability/abilities.html">
+<link rel="import" href="ability/droppable.html">
+<link rel="import" href="ability/helpable.html">
+<link rel="import" href="ability/shuffleable.html">
+<link rel="import" href="region/region.html">
+<link rel="import" href="service/config.html">
+<link rel="import" href="third_party/di.html">
+<link rel="import" href="trigger/key.html">
+<link rel="import" href="utils.html">
+
+<template>
+  <style>
+    :host {
+      display: inline-block;
+      height: var(--card-height);
+      width: var(--card-width);
+    }
+
+    ::content > * {
+      left: 0;
+      right: 0;
+      margin-left: auto;
+      margin-right: auto;
+      position: absolute;
+    }
+
+    #root {
+      outline: var(--border);
+      outline-offset: -1px;
+      position: relative;
+      height: 100%;
+      width: 100%;
+    }
+  </style>
+
+  <div id="root">
+    <content></content>
+  </div>
+</template>
+
+<script>
+DI
+    .prefix('pb')
+    .constant('doc', document.currentScript.ownerDocument)
+    .with('template', { doc: '=' }, $i => $i.doc.querySelector('template'))
+    .bind('region.Deck',
+        {
+          $registry: '=',
+          doc: '=',
+          template: '=',
+          Abilities: 'ability.=',
+          Config: 'service.=',
+          Droppable: 'ability.=',
+          Helpable: 'ability.=',
+          Key: 'trigger.=',
+          Region: 'region.=',
+          Shuffleable: 'ability.=',
+          Utils: '=',
+        },
+        $i => {
+
+  /**
+   * Represents a collection of items that can be sorted. To use this, create a `pb-r-deck` element.
+   * Any child elements of this class are considered to be in the deck.
+   *
+   * ```html
+   * <!-- Example: Deck containing two cards -->
+   * <pb-r-deck>
+   *   <pb-c-card id="card1">
+   *     <div pb-front>Front</div>
+   *     <div pb-back>Back</div>
+   *   </pb-c-card>
+   *   <pb-c-card id="card2">
+   *     <div pb-front>Front</div>
+   *     <div pb-back>Back</div>
+   *   </pb-c-card>
+   * </pb-r-deck>
+   * ```
+   *
+   * Supported abilities:
+   * - {{#crossLink "ability.Droppable"}}drop{{/crossLink}}
+   * - {{#crossLink "ability.Shuffleable"}}shuffle{{/crossLink}}
+   *
+   * @class region.Deck
+   * @extends region.Region
+   */
+
+  const EL_NAME = 'pb-r-deck';
+
+  class Deck extends $i.Region {
+
+    /**
+     * Called when the element is created.
+     *
+     * @method createdCallback
+     */
+    createdCallback() {
+      super.createdCallback();
+      this.createShadowRoot().appendChild($i.Utils.activateTemplate($i.template, $i.doc));
+    }
+
+    /**
+     * The number of elements that users can pick out from the deck.
+     *
+     * @property pickableChildCount
+     * @type number
+     * @readonly
+     */
+    get pickableChildCount() {
+      return this.childElementCount;
+    }
+  }
+
+  $i.Config.add(
+      EL_NAME,
+      new $i.Helpable('help'),
+      new $i.Shuffleable('shuffle', new $i.Key('s'), true),
+      new $i.Droppable('drop', new $i.Key('d'), true));
+
+  $i.$registry.add(EL_NAME, Deck.prototype);
+
+  return Deck;
+});
+</script>

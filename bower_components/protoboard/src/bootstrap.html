@@ -1,0 +1,79 @@
+<base href=".">
+
+<link rel="import" href="third_party/di.html">
+<link rel="import" href="service/config.html">
+<link rel="import" href="service/registry.html">
+
+<style>
+  @import url(http://fonts.googleapis.com/css?family=Roboto);
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-font);
+    font-family: var(--font);
+    font-size: small;
+  }
+
+  p {
+    margin-after: .5em;
+    margin-before: .5em;
+  }
+
+  .pb-trbl-fit,
+  * /deep/ .pb-trbl-fit {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+  }
+</style>
+
+<script>
+DI
+    .prefix('pb')
+    .bind('$registry', { Registry: 'service.=' }, $i => new $i.Registry())
+    .bind(
+        'Bootstrap',
+        {
+          $registry: '=',
+          Bag: 'region.=?',
+          Card: 'component.=?',
+          Config: 'service.=',
+          CubeTower: 'region.=?',
+          Deck: 'region.=?',
+          Dice: 'component.=?',
+          Generate: 'ui.=?',
+          Hand: 'region.=?',
+          HexGrid: 'surface.=?',
+          Preview: 'ui.=?',
+          Previewer: 'ui.=?',
+          Rect: 'region.=?',
+          RectGrid: 'surface.=?',
+          Shape: 'ui.=?',
+          State: 'service.=?',
+          Token: 'component.=?',
+          TriangleGrid: 'surface.=?',
+          Utils: '=',
+        },
+        $i => {
+
+  return {
+    run(document) {
+      $i.Utils
+          .watch(() => document.readyState === 'interactive' || document.readyState === 'complete')
+          .then(() => {
+            $i.$registry.register(document, $i.Config);
+
+            let tags = $i.Utils.
+                toArray(document.querySelectorAll(':unresolved')).
+                map(el => el.tagName.toLowerCase());
+            let tagSet = new Set(tags);
+            for (let tag of tagSet) {
+              console.warn(`Element ${tag} is unresolved`);
+            }
+          });
+      }
+    };
+});
+</script>

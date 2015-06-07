@@ -1,0 +1,201 @@
+<base href="..">
+
+<link rel="import" href="ability/droppable.html">
+<link rel="import" href="ability/helpable.html">
+<link rel="import" href="ability/pickable.html">
+<link rel="import" href="region/region.html">
+<link rel="import" href="service/config.html">
+<link rel="import" href="service/move.html">
+<link rel="import" href="third_party/di.html">
+<link rel="import" href="trigger/click.html">
+<link rel="import" href="trigger/key.html">
+<link rel="import" href="utils.html">
+
+<template id="main">
+  <style>
+    :host {
+      height: var(--component-height);
+      width: var(--component-width);
+    }
+
+    #root {
+      outline: var(--border);
+      outline-offset: -1px;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* The placeholder */
+    ::content > :not([pb-placeholder]) {
+      display: none;
+    }
+
+    ::content > [pb-placeholder] {
+      position: absolute;
+      background-color: var(--color-background-accent);
+      height: var(--component-height);
+      line-height: var(--component-height);
+      text-align: center;
+      width: var(--component-width);
+      outline: var(--border);
+      outline-offset: -1px;
+      z-index: -1;
+    }
+
+    ::content > [pb-placeholder]:only-child {
+      display: none;
+    }
+  </style>
+
+  <div id="root">
+    <content></content>
+  </div>
+</template>
+
+<template id="placeholder">
+  <div class="pb-placeholder">???</div>
+</template>
+
+<script>
+DI
+    .prefix('pb')
+    .constant('doc', document.currentScript.ownerDocument)
+    .with('template', { doc: '=' }, $i => $i.doc.querySelector('template#main'))
+    .with('placeHolderTmp', { doc: '=' }, $i => $i.doc.querySelector('template#placeholder'))
+    .bind('region.Bag',
+        {
+          $: '/=',
+          $registry: '=',
+          doc: '=',
+          template: '=',
+          placeHolderTmp: '=',
+          Chance: '/=',
+          Click: 'trigger.=',
+          Config: 'service.=',
+          Droppable: 'ability.=',
+          Helpable: 'ability.=',
+          Key: 'trigger.=',
+          Move: 'service.=',
+          Pickable: 'ability.=',
+          Region: 'region.=',
+          Utils: '=',
+          TEST_MODE: '/=?'
+        },
+        $i => {
+
+  const EL_NAME = 'pb-r-bag';
+  const ATTR_PLACEHOLDER = 'pb-placeholder';
+  const ATTR_PLACEHOLDER_CONTENT = 'pb-placeholder-content';
+
+  // Private symbols
+  const __placeHolderEl__ = Symbol('placeHolderEl');
+
+  class RandomPickable extends $i.Pickable {
+
+    /**
+     * Element with this ability has content that can be picked and dragged around. When triggered,
+     * a random child of the element will be picked. The child element can be dropped on elements
+     * with {{#crossLink "ability.Droppable"}}{{/crossLink}} ability.
+     *
+     * @constructor
+     * @class region.Bag.RandomPickable
+     * @param {string} [name=pickable] Name of the ability.
+     * @param {trigger.Trigger} [defaultTrigger=trigger.Click] Default trigger for the ability.
+     * @param {boolean} [defaultEnabled=true] True iff the ability should be enabled by default.
+     * @extends ability.Pickable
+     */
+    constructor(name = 'pickable', defaultTrigger = new $i.Click(), defaultEnabled = true) {
+      super(name, defaultTrigger, defaultEnabled);
+    }
+
+    /**
+     * Picks up a random child element of the given element.
+     *
+     * @method doTrigger
+     * @param {Element} el The element whose child element should be randomly picked.
+     */
+    doTrigger(el) {
+      let candidates = $i.Utils.toArray(el.children)
+          .filter(child => $i.$(child).attr(ATTR_PLACEHOLDER) === undefined);
+      if (candidates.length > 0) {
+        $i.Move.add($i.Chance.pick(candidates));
+      }
+    }
+  }
+
+  /**
+   * A collection of components. You cannot see the component until you drag one out of it.
+   *
+   * To make a bag, create a `pb-r-bag` element. You can override the content of the placeholder by
+   * creating a child element with a `pb-placeholder-content` attribute. This element will be used for
+   * the placeholder content.
+   *
+   * ```html
+   * <!-- Example: Create a bag with a place holder token displaying "SECRET!!" -->
+   * <pb-r-bag>
+   *   <div pb-placeholder-content>SECRET!!</div>
+   * </pb-r-bag>
+   * ```
+   *
+   * Supported abilitie:
+   * - {{#crossLink "region.Bag.RandomPickable"}}pickable{{/crossLink}}
+   * - {{#crossLink "ability.Droppable"}}droppable{{/crossLink}}
+   *
+   * @class region.Bag
+   * @extends region.Region
+   */
+
+  class Bag extends $i.Region {
+
+    /**
+     * Called when the element is created.
+     *
+     * @method createdCallback
+     */
+    createdCallback() {
+      super.createdCallback();
+
+      this.createShadowRoot().appendChild($i.Utils.activateTemplate($i.template, $i.doc));
+
+      this[__placeHolderEl__] = this.querySelector(`[${ATTR_PLACEHOLDER}]`);
+
+      if (!this[__placeHolderEl__]) {
+        let placeHolderContent = this.querySelector(`[${ATTR_PLACEHOLDER_CONTENT}]`) ||
+            $i.Utils.activateTemplate($i.placeHolderTmp, $i.doc);
+
+        this[__placeHolderEl__] = $i.doc.createElement('div');
+        this[__placeHolderEl__].appendChild(placeHolderContent);
+        $i.$(this[__placeHolderEl__]).attr(ATTR_PLACEHOLDER, '');
+        this.insertBefore(this[__placeHolderEl__], this.lastChild);
+      }
+    }
+
+    /**
+     * The number of elements that users can pick out from the bag.
+     *
+     * @property pickableChildCount
+     * @type number
+     * @readonly
+     */
+    get pickableChildCount() {
+      return this.childElementCount - this.querySelectorAll(`[${ATTR_PLACEHOLDER}]`).length;
+    }
+  }
+
+  Bag.prototype[__placeHolderEl__] = null;
+
+  $i.Config.add(
+      EL_NAME,
+      new $i.Helpable('help'),
+      new $i.Droppable('drop', new $i.Key('d')),
+      new RandomPickable('pick', new $i.Key('q')));
+
+  $i.$registry.add(EL_NAME, Bag.prototype);
+
+  if ($i.TEST_MODE) {
+    Bag.RandomPickable = RandomPickable;
+  }
+
+  return Bag;
+});
+</script>

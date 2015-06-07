@@ -1,0 +1,82 @@
+<base href="..">
+
+<link rel="import" href="ability/helpable.html">
+<link rel="import" href="ability/pickable.html">
+<link rel="import" href="component/component.html">
+<link rel="import" href="service/config.html">
+<link rel="import" href="third_party/di.html">
+<link rel="import" href="trigger/key.html">
+<link rel="import" href="utils.html">
+
+<template>
+  <div id="root">
+    <content></content>
+  </div>
+</template>
+
+<script>
+DI
+    .prefix('pb')
+    .constant('doc', document.currentScript.ownerDocument)
+    .with('template', { doc: '=' }, $i => $i.doc.querySelector('template'))
+    .bind('component.Token',
+        {
+          $registry: '=',
+          Component: 'component.=',
+          Config: 'service.=',
+          Helpable: 'ability.=',
+          Key: 'trigger.=',
+          Pickable: 'ability.=',
+          Utils: '=',
+          doc: '=',
+          template: '=',
+        },
+        $i => {
+
+  const EL_NAME = 'pb-c-token';
+
+  /**
+   * A simple movable component with only one state. Examples of token:
+   * - Chess piece
+   * - Cubes
+   * - Damage marker
+   *
+   * To use this, create a `pb-c-token` element with one child element. This child element will be
+   * displayed as the token.
+   *
+   * ```html
+   * <!-- Example: A square token -->
+   * <pb-c-token>
+   *   <div style="background: red; width: 50px; height: 50px;"></div>
+   * <pb-c-token>
+   * ```
+   *
+   * Supported abilities:
+   * - {{#crossLink "ability.Pickable"}}pickable{{/crossLink}}
+   *
+   * @class component.Token
+   * @extends component.Component
+   */
+  class Token extends $i.Component {
+
+    /**
+     * Called when the element is created.
+     *
+     * @method createdCallback
+     */
+    createdCallback() {
+      super.createdCallback();
+      this.createShadowRoot().appendChild($i.Utils.activateTemplate($i.template, $i.doc));
+    }
+  }
+
+  $i.Config.add(
+      'pb-c-token',
+      new $i.Helpable('help'),
+      new $i.Pickable('pick', new $i.Key('q'), true));
+
+  $i.$registry.add(EL_NAME, Token.prototype);
+
+  return Token;
+});
+</script>

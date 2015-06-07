@@ -1,0 +1,56 @@
+<html><head><base href=".">
+
+<link rel="import" href="third_party/di.html">
+<link rel="import" href="trigger/click.html">
+<link rel="import" href="utils.html">
+
+<script>"use strict";
+
+DI.bind("pb.t", { _: "=" }, function ($i) {
+  var TestUtil = {
+    createFakeAbility: function createFakeAbility(name) {
+      var trigger = arguments[1] === undefined ? this.createFakeTrigger("" + name + "-trigger") : arguments[1];
+      return (function () {
+        return {
+          attrName: "attr" + name,
+          attrTrigger: "attr" + name + "Trigger",
+          defaultTrigger: trigger,
+          getTrigger: function () {
+            return trigger;
+          },
+          init: $i._.spiedFunction(),
+          isEnabled: $i._.spiedFunction(),
+          updateConfig: $i._.spiedFunction(),
+          trigger: $i._.spiedFunction()
+        };
+      })();
+    },
+
+    createFakeEvents: function createFakeEvents() {
+      var fake = {};
+      fake.of = $i._.spiedFunction().overrideReturn(fake);
+      fake.on = $i._.spiedFunction().overrideReturn(fake);
+      fake.off = $i._.spiedFunction().overrideReturn(fake);
+      return fake;
+    },
+
+    createFakeTrigger: function createFakeTrigger(name) {
+      return {
+        toString: function toString() {
+          return name;
+        },
+        on: $i._.spiedFunction(),
+        off: $i._.spiedFunction()
+      };
+    },
+
+    getSymbol: function getSymbol(obj, name) {
+      return Object.getOwnPropertySymbols(obj).find(function (symbol) {
+        return "Symbol(" + name + ")" === symbol.toString();
+      });
+    }
+  };
+
+  return TestUtil;
+});</script>
+</head><body></body></html>

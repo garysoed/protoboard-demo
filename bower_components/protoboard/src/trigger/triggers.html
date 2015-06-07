@@ -1,0 +1,46 @@
+<base href="..">
+
+<link rel="import" href="third_party/di.html">
+<link rel="import" href="trigger/click.html">
+<link rel="import" href="trigger/key.html">
+
+<script>
+DI
+    .prefix('pb.trigger')
+    .bind('Triggers', { Click: '=', Key: '=' }, $i => {
+
+  // Private symbols
+  const __observer__ = Symbol();
+  const __target__ = Symbol();
+  const __triggers__ = Symbol();
+
+  const __onMutation__ = Symbol();
+
+  class Registrar {
+    constructor(target) {
+      this[__target__] = target;
+    }
+
+    add(trigger) {
+      if (!this[__target__][__triggers__]) {
+        this[__target__][__triggers__] = new Map();
+      }
+      this[__target__][__triggers__].set(trigger.attrName, trigger);
+      return this;
+    }
+  }
+
+  let Triggers = {
+    parse(str) {
+      let trigger = $i.Click.parse(str) || $i.Key.parse(str);
+
+      if (!trigger) {
+        throw `Unparsable trigger string: ${str}`;
+      }
+      return trigger;
+    }
+  };
+
+  return Triggers;
+});
+</script>

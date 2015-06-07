@@ -1,0 +1,78 @@
+<base href=".">
+
+<link rel="import" href="ability/abilities.html">
+<link rel="import" href="third_party/di.html">
+<link rel="import" href="trigger/triggers.html">
+
+<script>
+DI
+    .prefix('pb')
+    .bind('PbElement', { $: '/=', Abilities: 'ability.=' }, $i => {
+
+  // Private symbols.
+  const __isCreated__ = Symbol();
+
+  const ATTR_ID = 'pb-id';
+  const IDS = new Map();
+
+  /**
+   * Base class of all ProtoBoard elements.
+   *
+   * @class PbElement
+   * @extends HTMLElement
+   */
+  class PbElement extends HTMLElement {
+
+    /**
+     * Called when the element is created
+     *
+     * @method createdCallback
+     */
+    createdCallback() {
+      $i.Abilities.init(this);
+      this[__isCreated__] = false;
+
+      let nameParts = this.nodeName.toLowerCase().split('-');
+      let prefix = $i.$(this).attr(ATTR_ID)
+          || nameParts[nameParts.length - 1];
+
+      if (IDS.has(prefix)) {
+        IDS.set(prefix, IDS.get(prefix) + 1);
+      } else {
+        IDS.set(prefix, 0);
+      }
+
+      $i.$(this).attr(ATTR_ID, `${prefix}-${IDS.get(prefix)}`);
+    }
+
+    /**
+     * Called when the element is attached to the document.
+     *
+     * @method attachedCallback
+     */
+    attachedCallback() {
+      this[__isCreated__] = true;
+    }
+
+    /**
+     * Called when the element is detached from the document.
+     *
+     * @method detachedCallback
+     */
+    detachedCallback() { }
+
+    /**
+     * True iff the element has been created.
+     *
+     * @type boolean
+     * @property isCreated
+     * @final
+     */
+    get isCreated() {
+      return this[__isCreated__];
+    }
+  }
+
+  return PbElement;
+});
+</script>

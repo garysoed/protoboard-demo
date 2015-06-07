@@ -1,0 +1,182 @@
+<html><head><base href="..">
+
+<link rel="import" href="polyfill.html">
+<link rel="import" href="third_party/di.html">
+<link rel="import" href="utils.html">
+
+<script>"use strict";
+
+var _defineProperty = function (obj, key, value) { return Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); };
+
+var _createClass = (function () { function defineProperties(target, props) { for (var key in props) { var prop = props[key]; prop.configurable = true; if (prop.value) prop.writable = true; } Object.defineProperties(target, props); } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
+
+DI.prefix("pb").bind("ability.Abilities", { Utils: "=" }, function ($i) {
+  var __abilities__ = Symbol("abilities");
+  var __element__ = Symbol();
+  var __observer__ = Symbol("observer");
+
+  var __onMutation__ = Symbol("onMutation");
+
+  var Builder = (function () {
+    function Builder(el) {
+      _classCallCheck(this, Builder);
+
+      this[__element__] = el;
+    }
+
+    _createClass(Builder, {
+      add: {
+        value: function add(ability) {
+          var key = ability.attrName;
+          if (!this[__element__][__abilities__]) {
+            this[__element__][__abilities__] = new Map();
+          }
+
+          if (this[__element__][__abilities__].has(ability.attrName)) {
+            throw "Ability with key " + ability.attrName + " is already registered";
+          }
+          this[__element__][__abilities__].set(ability.attrName, ability);
+
+          if (this[__element__][__abilities__].has(ability.attrTrigger)) {
+            throw "Ability with key " + ability.attrTrigger + " is already registered";
+          }
+          this[__element__][__abilities__].set(ability.attrTrigger, ability);
+
+          return this;
+        }
+      },
+      getAll: {
+        value: function getAll() {
+          if (!this[__element__][__abilities__]) {
+            return new Map();
+          }
+
+          var abilities = new Set(this[__element__][__abilities__].values());
+          var map = new Map();
+          var _iteratorNormalCompletion = true;
+          var _didIteratorError = false;
+          var _iteratorError = undefined;
+
+          try {
+            for (var _iterator = abilities[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+              var ability = _step.value;
+
+              map.set(ability.attrName, ability);
+            }
+          } catch (err) {
+            _didIteratorError = true;
+            _iteratorError = err;
+          } finally {
+            try {
+              if (!_iteratorNormalCompletion && _iterator["return"]) {
+                _iterator["return"]();
+              }
+            } finally {
+              if (_didIteratorError) {
+                throw _iteratorError;
+              }
+            }
+          }
+
+          return map;
+        }
+      },
+      trigger: {
+        value: function trigger(name) {
+          var el = this[__element__];
+          var ability = null;
+          if (el[__abilities__]) {
+            ability = el[__abilities__].get(name);
+          }
+
+          if (!ability) {
+            throw new Error("Ability " + name + " is not registered with element " + el);
+          }
+
+          ability.trigger(el);
+
+          return this;
+        }
+      }
+    });
+
+    return Builder;
+  })();
+
+  var Abilities = (function () {
+    var _Abilities = {};
+
+    _defineProperty(_Abilities, __onMutation__, function (records) {
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
+
+      try {
+        for (var _iterator = records[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var record = _step.value;
+
+          var el = record.target;
+          var attrName = record.attributeName;
+          if (el[__abilities__] && el[__abilities__].has(attrName)) {
+            el[__abilities__].get(attrName).updateConfig(el);
+          }
+        }
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator["return"]) {
+            _iterator["return"]();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
+        }
+      }
+    });
+
+    _defineProperty(_Abilities, "of", function of(el) {
+      return new Builder(el);
+    });
+
+    _defineProperty(_Abilities, "init", function init(el) {
+      if (el[__observer__]) {
+        throw "Element " + el + " is already initialized";
+      }
+      el[__observer__] = new MutationObserver(this[__onMutation__]);
+
+      if (!el[__abilities__]) {
+        return;
+      }
+
+      var observerConfig = {
+        attributes: true
+      };
+
+      $i.Utils.extendFn(el, "attachedCallback", function () {
+        return el[__observer__].observe(el, observerConfig);
+      });
+      $i.Utils.extendFn(el, "detachedCallback", function () {
+        return el[__observer__].disconnect();
+      });
+
+      var abilities = new Set(el[__abilities__].values());
+      abilities.forEach(function (ability) {
+        ability.init(el);
+      });
+    });
+
+    return _Abilities;
+  })();
+
+  if (window.TEST_MODE) {
+    Abilities.Builder = Builder;
+  }
+
+  return Abilities;
+});</script>
+</head><body></body></html>

@@ -1,0 +1,41 @@
+<base href="..">
+
+<script src="third_party/listener/out/bin.min.js"></script>
+
+<link rel="import" href="third_party/di.html">
+<link rel="import" href="third_party/hammer.html">
+
+<script>
+DI
+    .prefix('pb')
+    .bind('Events', { Hammer: '=' }, $i => {
+
+  let Handlers = window['Events']['Handlers'];
+  Handlers
+      .add(
+          'dom',
+          (element, eventName, handler) => {
+            element.addEventListener(eventName, handler);
+          },
+          (element, eventName, handler) => {
+            element.removeEventListener(eventName, handler);
+          })
+      .add(
+          'jquery',
+          (element, eventName, handler) => {
+            $(element).on(eventName, handler);
+          },
+          (element, eventName, handler) => {
+            $(element).off(eventName, handler);
+          })
+      .add(
+          'hammer',
+          (element, eventName, handler) => {
+            $i.Hammer.on(element, eventName, handler);
+          },
+          (element, eventName, handler) => {
+            $i.Hammer.off(element, eventName, handler);
+          });
+  return window['Events'];
+});
+</script>
