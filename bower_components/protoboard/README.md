@@ -1,6 +1,6 @@
 # protoboard
 
-[![Circle CI](https://img.shields.io/circleci/project/garysoed/protoboard/0.3.1.svg?style=flat-square)](https://img.shields.io/circleci/project/garysoed/protoboard/0.3.1.svg?style=flat-square)
+[![Circle CI](https://img.shields.io/circleci/project/garysoed/protoboard/master.svg?style=flat-square)](https://img.shields.io/circleci/project/garysoed/protoboard/master.svg?style=flat-square)
 
 Library to easily prototype board games. Check [here](https://garysoed.github.com/protoboard) for
 full documentation, or [here](https://garysoed.github.com/protoboard-demo/index.html) for demo of
@@ -9,6 +9,11 @@ supported components.
 Interested in contributing? Read the guideline [here](./CONTRIBUTING.md).
 
 ## Release notes
+### 0.3.2
+- Fixed bug where minimized files do not depend on minimized dependencies.
+- Minimized files have been moved from `out/` to `min/`. Their names no longer have the `.min.html`
+suffix.
+
 ### 0.3.1
 New
 - Added [tutorial](http://garysoed.github.io/protoboard/classes/6%20Abilities.html) on Abilities.
