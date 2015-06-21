@@ -20,9 +20,9 @@
     "tests"
   ],
   "dependencies": {
-    "protoboard": "~0.2.2"
+    "protoboard": "~0.3.1"
   },
   "resolutions": {
-    "protoboard": "~0.3.0"
+    "protoboard": "~0.3.1"
   }
 }

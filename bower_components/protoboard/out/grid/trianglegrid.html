@@ -71,15 +71,15 @@ DI.prefix("pb").constant("doc", document.currentScript.ownerDocument)["with"]("t
   return $i.doc.querySelector("template#row");
 })["with"]("templateTile", { doc: "=" }, function ($i) {
   return $i.doc.querySelector("template#tile");
-}).bind("surface.TriangleGrid", {
+}).bind("grid.TriangleGrid", {
   $registry: "=",
   templateMain: "=",
   templateRow: "=",
   templateTile: "=",
   Config: "service.=",
-  Grid: "surface.=" }, function ($i) {
+  Grid: "grid.=" }, function ($i) {
 
-  var EL_NAME = "pb-s-trianglegrid";
+  var EL_NAME = "pb-g-trianglegrid";
 
   var TriangleGrid = (function (_$i$Grid) {
     function TriangleGrid() {
@@ -118,8 +118,10 @@ DI.prefix("pb").constant("doc", document.currentScript.ownerDocument)["with"]("t
     return TriangleGrid;
   })($i.Grid);
 
+  TriangleGrid.NODE_NAME = EL_NAME;
+
   $i.Config.add(EL_NAME);
-  $i.$registry.add(EL_NAME, TriangleGrid.prototype);
+  $i.$registry.add(EL_NAME, TriangleGrid);
 
   return TriangleGrid;
 });</script>

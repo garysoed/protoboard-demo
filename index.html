@@ -2,25 +2,19 @@
 <html>
   <base href="./index">
   <head>
-    <script src="bower_components/protoboard/out/third_party/webcomponentsjs/webcomponents.js"></script>
-
-    <script>
-      window.HTMLImports.flags['load'] = true;
-    </script>
-
     <link rel="import" href="bower_components/protoboard/out/bootstrap.html">
     <link rel="import" href="bower_components/protoboard/out/component/card.html">
     <link rel="import" href="bower_components/protoboard/out/component/dice.html">
     <link rel="import" href="bower_components/protoboard/out/component/token.html">
+    <link rel="import" href="bower_components/protoboard/out/grid/hexgrid.html">
+    <link rel="import" href="bower_components/protoboard/out/grid/rectgrid.html">
+    <link rel="import" href="bower_components/protoboard/out/grid/trianglegrid.html">
     <link rel="import" href="bower_components/protoboard/out/region/bag.html">
     <link rel="import" href="bower_components/protoboard/out/region/cubetower.html">
     <link rel="import" href="bower_components/protoboard/out/region/deck.html">
     <link rel="import" href="bower_components/protoboard/out/region/hand.html">
     <link rel="import" href="bower_components/protoboard/out/region/rect.html">
     <link rel="import" href="bower_components/protoboard/out/service/template.html">
-    <link rel="import" href="bower_components/protoboard/out/surface/hexgrid.html">
-    <link rel="import" href="bower_components/protoboard/out/surface/rectgrid.html">
-    <link rel="import" href="bower_components/protoboard/out/surface/trianglegrid.html">
     <link rel="import" href="bower_components/protoboard/out/third_party/di.html">
     <link rel="import" href="bower_components/protoboard/out/ui/generate.html">
     <link rel="import" href="bower_components/protoboard/out/ui/preview.html">
@@ -265,12 +259,12 @@
         <tr>
           <td>Rectangle Grid</td>
           <td>
-            <pb-s-rectgrid row="2" col="2">
+            <pb-g-rectgrid row="2" col="2">
               <pb-r-deck pb-col="0" pb-row="0"></pb-r-deck>
               <pb-r-deck pb-col="1" pb-row="0"></pb-r-deck>
               <pb-r-deck pb-col="0" pb-row="1"></pb-r-deck>
               <pb-r-deck pb-col="1" pb-row="1"></pb-r-deck>
-            </pb-s-rectgrid>
+            </pb-g-rectgrid>
           </td>
           <td>
             Layout components in a rectangular grid
@@ -285,7 +279,7 @@
         <tr>
           <td>Hex Grid</td>
           <td>
-            <pb-s-hexgrid row="5" col="3">
+            <pb-g-hexgrid row="5" col="3">
               <div pb-col="0" pb-row="0">
                 <pb-u-shape shape="hexagon"></pb-u-shape>
                 <pb-r-bag></pb-r-bag>
@@ -320,7 +314,7 @@
                 <pb-u-shape shape="hexagon"></pb-u-shape>
                 <pb-r-bag></pb-r-bag>
               </div>
-            </pb-s-hexgrid>
+            </pb-g-hexgrid>
           </td>
           <td>
             Layout components in a hexagonal grid
@@ -335,7 +329,7 @@
         <tr>
           <td>Triangle Grid</td>
           <td>
-            <pb-s-trianglegrid row="3" col="5">
+            <pb-g-trianglegrid row="3" col="5">
               <pb-u-generate>
                 <template>
                   {{#pb-for 0 3}}
@@ -346,7 +340,7 @@
                   {{/pb-for}}
                 </template>
               </pb-u-generate>
-            </pb-s-trianglegrid>
+            </pb-g-trianglegrid>
           </td>
           <td>
             Layout components in a triangle grid

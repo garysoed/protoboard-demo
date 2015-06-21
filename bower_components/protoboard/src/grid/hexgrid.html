@@ -59,42 +59,42 @@ DI
     .with('templateRow', { doc: '=' }, $i => $i.doc.querySelector('template#row'))
     .with('templateTile', { doc: '=' }, $i => $i.doc.querySelector('template#tile'))
     .bind(
-        'surface.HexGrid',
+        'grid.HexGrid',
         {
           $registry: '=',
           templateMain: '=',
           templateRow: '=',
           templateTile: '=',
           Config: 'service.=',
-          Grid: 'surface.=',
+          Grid: 'grid.=',
         },
         $i => {
 
-  const EL_NAME = 'pb-s-hexgrid';
+  const EL_NAME = 'pb-g-hexgrid';
 
   /**
-   * A surface that lays out its children in a hexagonal grid. To use this, add attributes
+   * A grid that lays out its children in a hexagonal grid. To use this, add attributes
    * `row` and `col` to the element
-   * `pb-s-hexgrid`. These are the number of rows and columns in the grid.
+   * `pb-g-hexgrid`. These are the number of rows and columns in the grid.
    *
    * Add the contents of the grid as children of this element. Use `pb-row` and `pb-col` attributes
    * on them to indicate their positions in the grid.
    *
    * ```html
-   * <pb-s-hexgrid row="2" col="3">
+   * <pb-g-hexgrid row="2" col="3">
    *   <!-- Third column is empty -->
    *   <div pb-row="0" pb-col="0">Top Left</div>
    *   <div pb-row="0" pb-col="1">Top Middle</div>
    *   <div pb-row="1" pb-col="0">Bottom Left</div>
    *   <div pb-row="1" pb-col="1">Bottom Middle</div>
-   * </pb-s-hexgrid>
+   * </pb-g-hexgrid>
    * ```
    *
    * You can use {{#crossLink "ui.Shape"}}`<pb-u-shape>`{{/crossLink}} to create hexagon shapes.
    *
-   * @class surface.HexGrid
+   * @class grid.HexGrid
    * @since 0.2.0
-   * @extends surface.Grid
+   * @extends grid.Grid
    */
   class HexGrid extends $i.Grid {
 
@@ -144,8 +144,17 @@ DI
     }
   }
 
+  /**
+   * Node name of the hex grid.
+   * @property NODE_NAME
+   * @type string
+   * @final
+   * @static
+   */
+  HexGrid.NODE_NAME = EL_NAME;
+
   $i.Config.add(EL_NAME);
-  $i.$registry.add(EL_NAME, HexGrid.prototype);
+  $i.$registry.add(EL_NAME, HexGrid);
 
   return HexGrid;
 });
