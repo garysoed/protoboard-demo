@@ -1,6 +1,7 @@
 <html><head><base href="..">
 
 <link rel="import" href="trigger/trigger.html">
+<link rel="import" href="trigger/triggers.html">
 <link rel="import" href="third_party/di.html">
 <link rel="import" href="third_party/events.html">
 
@@ -12,27 +13,32 @@ var _inherits = function (subClass, superClass) { if (typeof superClass !== "fun
 
 var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } };
 
-DI.prefix("pb").bind("trigger.Click", { Events: "=", Trigger: "trigger.=" }, function ($i) {
-  var Click = (function (_$i$Trigger) {
+DIJS.prefix("pb").bind("trigger.Click", function (require) {
+
+  var Events = require("Events");
+  var Trigger = require("trigger.Trigger");
+  var Triggers = require("trigger.Triggers");
+
+  var Click = (function (_Trigger) {
     function Click() {
       _classCallCheck(this, Click);
 
-      if (_$i$Trigger != null) {
-        _$i$Trigger.apply(this, arguments);
+      if (_Trigger != null) {
+        _Trigger.apply(this, arguments);
       }
     }
 
-    _inherits(Click, _$i$Trigger);
+    _inherits(Click, _Trigger);
 
     _createClass(Click, {
       on: {
         value: function on(element, ability) {
-          $i.Events.of(element, this).on("hammer", "singletap", ability.trigger.bind(ability, element));
+          Events.of(element, this).on("hammer", "singletap", ability.trigger.bind(ability, element));
         }
       },
       off: {
         value: function off(element) {
-          $i.Events.of(element, this).off("hammer", "singletap");
+          Events.of(element, this).off("hammer", "singletap");
         }
       },
       toString: {
@@ -48,11 +54,11 @@ DI.prefix("pb").bind("trigger.Click", { Events: "=", Trigger: "trigger.=" }, fun
     });
 
     return Click;
-  })($i.Trigger);
+  })(Trigger);
 
-  Click.parse = function (str) {
+  Triggers.register(function (str) {
     return str === "click" ? new Click() : undefined;
-  };
+  });
 
   return Click;
 });</script>

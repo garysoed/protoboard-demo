@@ -2,11 +2,16 @@
 
 <link rel="import" href="third_party/di.html">
 <link rel="import" href="trigger/trigger.html">
+<link rel="import" href="trigger/triggers.html">
 
 <script>
-DI
+DIJS
     .prefix('pb')
-    .bind('trigger.DoubleClick', { Events: '=', Trigger: 'trigger.=' }, $i => {
+    .bind('trigger.DoubleClick', require => {
+
+  const Events = require('Events');
+  const Trigger = require('trigger.Trigger');
+  const Triggers = require('trigger.Triggers');
 
   /**
    * Triggers an ability when the element is double clicked.
@@ -14,7 +19,7 @@ DI
    * @class trigger.DoubleClick
    * @extends trigger.Trigger
    */
-  class DoubleClick extends $i.Trigger {
+  class DoubleClick extends Trigger {
 
     /**
      * Registers the given element to trigger the given ability when double clicked.
@@ -24,7 +29,7 @@ DI
      * @param {ability.Ability} ability The ability to trigger.
      */
     on(element, ability) {
-      $i.Events.of(element, this)
+      Events.of(element, this)
           .on('hammer', 'doubletap', ability.trigger.bind(ability, element));
     }
 
@@ -35,7 +40,7 @@ DI
      * @param {Element} element Element to unregister.
      */
     off(element) {
-      $i.Events.of(element, this).off('hammer', 'doubletap');
+      Events.of(element, this).off('hammer', 'doubletap');
     }
 
     /**
@@ -58,18 +63,9 @@ DI
     }
   }
 
-  /**
-   * Parses the input string
-   *
-   * @method parse
-   * @param {string} str The string to parse
-   * @return {trigger.DoubleClick|undefined} The DoubleClick trigger if parse is successful, or
-   *    `undefined` otherwise.
-   * @static
-   */
-  DoubleClick.parse = function(str) {
+  Triggers.register(str => {
     return (str === 'dblclick') ? new DoubleClick() : undefined;
-  };
+  });
 
   return DoubleClick;
 });

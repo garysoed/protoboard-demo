@@ -4,6 +4,7 @@
 <link rel="import" href="service/config.html">
 <link rel="import" href="service/registry.html">
 <link rel="import" href="third_party/di.html">
+<link rel="import" href="third_party/jquery.html">
 
 <style>
   pb-s-move {
@@ -35,19 +36,18 @@
 </style>
 
 <script>
-DI
+DIJS
     .prefix('pb')
-    .bind(
-        'service.Move',
-        {
-          $registry: '=',
-          Config: 'service.=',
-          Events: '=',
-          PbElement: '=',
-          Utils: '='
-        },
-        $i => {
+    .bind('service.Move', require => {
 
+  const $ = require('/$');
+  const $registry = require('$registry');
+  const Config = require('service.Config');
+  const Events = require('Events');
+  const PbElement = require('PbElement');
+  const Utils = require('Utils');
+
+  const EVENT_MOVE = 'move';
   const EL_NAME = 'pb-s-move';
 
   // Private symbols.
@@ -59,6 +59,9 @@ DI
 
   const __moveContainer__ = Symbol('moveContainer');
   const __onMouseMove__ = Symbol('onMouseMove');
+  const __onContainerMutation__ = Symbol('onContainerMutation');
+
+  const __origin__ = Symbol();
 
   /**
    * Service that handles moving elements around. Used by
@@ -95,7 +98,7 @@ DI
     [__moveContainer__]() {
       let width = 0;
       let height = 0;
-      $i.Utils.toArray(this[__container__].children).forEach(child => {
+      Utils.toArray(this[__container__].children).forEach(child => {
         if (!child[__width__] || !child[__height__]) {
           let rect = child.getBoundingClientRect();
           child[__height__] = Math.max(rect.height, height);
@@ -123,6 +126,29 @@ DI
     },
 
     /**
+     * Handles event when there is a mutation on the container element.
+     *
+     * @method __onContainerMutation__
+     * @param {Array} records Array of mutation records.
+     * @private
+     */
+    [__onContainerMutation__](records) {
+      for (let record of records) {
+        Utils.toArray(record.removedNodes).forEach(removedNode => {
+          if (removedNode[__origin__] && removedNode[__origin__] !== removedNode.parentElement) {
+            $(this).trigger(
+                this.Events.MOVE,
+                {
+                  moved: removedNode,
+                  from: removedNode[__origin__],
+                  to: removedNode.parentElement
+                });
+          }
+        });
+      }
+    },
+
+    /**
      * Sets the given element as being moved.
      *
      * @method add
@@ -131,6 +157,7 @@ DI
     add(el) {
       el[__height__] = undefined;
       el[__width__] = undefined;
+      el[__origin__] = el.parentElement;
       this[__container__].appendChild(el);
       this[__moveContainer__]();
     },
@@ -143,7 +170,18 @@ DI
      * @final
      */
     get movedElements() {
-      return new Set($i.Utils.toArray(this[__container__].children));
+      return new Set(Utils.toArray(this[__container__].children));
+    },
+
+    /**
+     * The next element to be moved.
+     *
+     * @property nextElement
+     * @type Element
+     * @final
+     */
+    get nextElement() {
+      return this[__container__].lastElementChild;
     },
 
     /**
@@ -166,18 +204,35 @@ DI
      */
     get mouseY() {
       return this[__mouseY__];
+    },
+
+    /**
+     * Events that this class can trigger.
+     * - `MOVE`: Called when an element has been moved.
+     *
+     * @property Events
+     * @type Object
+     * @final
+     */
+    get Events() {
+      return {
+        get MOVE() { return 'move'; }
+      };
     }
   };
 
-  class MoveElement extends $i.PbElement { }
+  class MoveElement extends PbElement { }
 
-  $i.Config.add(EL_NAME);
-  $i.$registry.add(EL_NAME, MoveElement);
-  $i.$registry.runAtRegister(doc => {
-    $i.Events.of(doc.body, Move)
+  Config.add(EL_NAME);
+  $registry.add(EL_NAME, MoveElement);
+  $registry.runAtRegister(doc => {
+    Events.of(doc.body, Move)
         .on('dom', 'mousemove', Move[__onMouseMove__].bind(Move));
     Move[__container__] = doc.createElement(EL_NAME);
     doc.body.appendChild(Move[__container__]);
+
+    let observer = new MutationObserver(Move[__onContainerMutation__].bind(Move));
+    observer.observe(Move[__container__], { childList: true });
   });
 
   return Move;

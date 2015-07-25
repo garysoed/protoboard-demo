@@ -18,10 +18,15 @@ var karma    = require('karma').server;
 var minimist = require('minimist');
 
 var path = require('path');
+var glob = require('glob');
+
+var Promise = require('promise');
 
 var loadtheme = require('./loadtheme');
 
-var VERSION = '0.3.2';
+var VERSION = '2.0.2';
+
+var PARALLEL_TEST_COUNT = 2;
 
 var SRC_DIR  = 'src';
 var TEST_DIR = 'test';
@@ -29,9 +34,12 @@ var DOC_DIR  = 'doc';
 var OUT_DIR  = 'out';
 var MIN_DIR  = 'min';
 
+var KARMA_CONF = __dirname + '/karma.conf.js';
+var KARMA_CONFIG = require(KARMA_CONF);
+
 function runKarma(singleRun, callback) {
   karma.start({
-    configFile: __dirname + '/karma.conf.js',
+    configFile: KARMA_CONF,
     singleRun: singleRun
   }, callback);
 };
@@ -85,7 +93,8 @@ gulp.task('js-hint', function() {
       .pipe(jshint({
         esnext: true,
         laxbreak: true,
-        sub: true
+        sub: true,
+        expr: true,
       }))
       .pipe(jshint.reporter('jshint-stylish'))
       .pipe(jshint.reporter('fail'));
@@ -150,16 +159,90 @@ gulp.task('test-server', function(done) {
   runKarma(false /* singleRun */, done);
 });
 
+function karmaRunner(files, callback, opt_errors) {
+  if (files.length <= 0) {
+    callback(opt_errors || []);
+    return;
+  }
+
+  var file = files.pop();
+  console.log('Testing: ' + file);
+  karma.start({
+    configFile: KARMA_CONF,
+    singleRun: true,
+    files: [
+      // Generated files
+      { pattern: 'out/**/!(*_test).*', included: false },
+
+      // Deps
+      { pattern: 'node_modules/chai/chai.js', included: false },
+      { pattern: 'node_modules/spies/**', included: false },
+
+      { pattern: 'out/testbase.html', included: false},
+      { pattern: file, included: true }
+    ]
+  },
+  function(err) {
+    var errors = opt_errors || [];
+    if (err) {
+      errors.push(err);
+    }
+
+    karmaRunner(files, callback, errors);
+  });
+}
+gulp.task('test-slow', gulp.series(
+    'compile',
+    function _testSlow(done) {
+      var options = minimist(process.argv.slice(2), {
+        'string': 'glob',
+        'default': {
+          'glob': 'out/**/*_test.html'
+        }
+      });
+
+      var files = glob.sync(options.glob);
+      console.log('Found ' + files.length + ' tests');
+
+      var fileGroups = [];
+      for (var i = 0; i < PARALLEL_TEST_COUNT; i++) {
+        fileGroups.push([]);
+      }
+
+      var groupIdx = 0;
+      while (files.length > 0) {
+        fileGroups[groupIdx].push(files.pop());
+        groupIdx = (groupIdx + 1) % fileGroups.length;
+      }
+
+      console.log('Running ' + fileGroups.length + ' tests in parallel');
+      var promises = fileGroups.map(function(fileGroup) {
+        return new Promise(function(resolve, reject) {
+          karmaRunner(fileGroup, resolve);
+        });
+      });
+
+      Promise.all(promises).then(function(errorsArray) {
+        var errors = errorsArray.reduce(Array.prototype.concat);
+        if (errors.length > 0) {
+          callback(new Error(errors.join('\n')));
+        } else {
+          callback();
+        }
+      });
+    }
+));
+
 gulp.task('watch', gulp.parallel(
     gulp.series(
         'source',
         function _watchSources() {
-          gulp.watch(SRC_DIR + '**/*.html', gulp.task('source'));
+          gulp.watch(SRC_DIR + '/**/*.html', gulp.task('source'));
         }),
     gulp.series(
         'test-source',
         function _watchTestSources() {
-          gulp.watch(TEST_DIR + '**/*.html', gulp.task('test-source'));
+          gulp.watch(TEST_DIR + '/**/*.html', gulp.task('test-source'));
         })
     ));
 
@@ -196,4 +279,6 @@ gulp.task('pack', gulp.series(
               .pipe(zip('bin.zip'))
               .pipe(gulp.dest('dist'));
         })
-))
+    ));
+
+gulp.task('default', gulp.task('test'));

@@ -1,6 +1,6 @@
 {
   "name": "protoboard",
-  "version": "0.3.3",
+  "version": "2.0.2",
   "homepage": "https://github.com/garysoed/protoboard",
   "main": "out/main.html",
   "authors": [
@@ -31,13 +31,13 @@
   "dependencies": {
     "listener": "garysoed/listener"
   },
-  "_release": "0.3.3",
+  "_release": "2.0.2",
   "_resolution": {
     "type": "version",
-    "tag": "v0.3.3",
-    "commit": "1a9b4368d1e7e62ab5863a70db6003914b71deec"
+    "tag": "v2.0.2",
+    "commit": "3c96bc5fab7a181f378c330e0fcff1698b3dd46a"
   },
   "_source": "git://github.com/garysoed/protoboard.git",
-  "_target": "~0.3.1",
+  "_target": "~2.0.0",
   "_originalSource": "protoboard"
 }

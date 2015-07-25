@@ -1,13 +1,18 @@
 <base href="..">
 
 <link rel="import" href="trigger/trigger.html">
+<link rel="import" href="trigger/triggers.html">
 <link rel="import" href="third_party/di.html">
 <link rel="import" href="third_party/events.html">
 
 <script>
-DI
+DIJS
     .prefix('pb')
-    .bind('trigger.Click', { Events: '=', Trigger: 'trigger.=' }, $i => {
+    .bind('trigger.Click', require => {
+
+  const Events = require('Events');
+  const Trigger = require('trigger.Trigger');
+  const Triggers = require('trigger.Triggers');
 
   /**
    * Triggers an ability when the element is clicked.
@@ -15,7 +20,7 @@ DI
    * @class trigger.Click
    * @extends trigger.Trigger
    */
-  class Click extends $i.Trigger {
+  class Click extends Trigger {
 
     /**
      * Registers the given element to trigger the given ability when clicked.
@@ -25,7 +30,7 @@ DI
      * @param {ability.Ability} ability The ability to trigger.
      */
     on(element, ability) {
-      $i.Events.of(element, this)
+      Events.of(element, this)
           .on('hammer', 'singletap', ability.trigger.bind(ability, element));
     }
 
@@ -36,7 +41,7 @@ DI
      * @param {Element} element Element to unregister.
      */
     off(element) {
-      $i.Events.of(element, this).off('hammer', 'singletap');
+      Events.of(element, this).off('hammer', 'singletap');
     }
 
     /**
@@ -59,18 +64,9 @@ DI
     }
   }
 
-  /**
-   * Parses the input string
-   *
-   * @method parse
-   * @param {string} str The string to parse
-   * @return {trigger.Click|undefined} The Click trigger if parse is successful, or `undefined`
-   *    otherwise.
-   * @static
-   */
-  Click.parse = function(str) {
+  Triggers.register(str => {
     return (str === 'click') ? new Click() : undefined;
-  };
+  });
 
   return Click;
 });

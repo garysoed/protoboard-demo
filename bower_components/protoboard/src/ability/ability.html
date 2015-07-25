@@ -8,17 +8,16 @@
 <link rel="import" href="utils.html">
 
 <script>
-DI
+DIJS
+    .bind('CustomEvent', () => CustomEvent)
     .prefix('pb')
-    .bind(
-        'ability.Ability',
-        {
-          $: '/=',
-          Check: '=',
-          Log: 'service.=',
-          Triggers: 'trigger.='
-        },
-        $i => {
+    .bind('ability.Ability', require => {
+
+  const $ = require('/$');
+  const Check = require('Check');
+  const CustomEvent = require('/CustomEvent');
+  const Log = require('service.Log');
+  const Triggers = require('trigger.Triggers');
 
   // Private symbols.
   const __name__ = Symbol();
@@ -29,6 +28,15 @@ DI
    * Base class for all abilities. Any abilities must extend this class and implement the methods
    * in this class.
    *
+   * Since `v1.1.0`, all abilities extending this class will trigger an event with the same name as
+   * this ability's name when triggered. This event's detail will have one field, called ability,
+   * which is a reference to this ability.
+   *
+   * Since `v1.2.0`, all abilities will log its triggering before and after it is triggered. In the
+   * entry passed into the preprocessor or the printer, you can examine the value of the `phase`
+   * entry. If it is `bubble`, the log is called before the trigger is ran. Otherwise, if it is
+   * `after`, the log is called after the trigger is ran.
+   *
    * @class ability.Ability
    */
   class Ability {
@@ -38,11 +46,12 @@ DI
      * @class ability.Ability
      * @param {string} name Name of the ability. This is used to identify an ability that has been
      *    added to an element. It therefore must be unique for the element.
-     * @param {trigger.Trigger} defaultTrigger The default trigger to trigger this ability.
+     * @param {trigger.Trigger} [defaultTrigger] The default trigger to trigger this ability, or
+     *    null if there are no default triggers.
      */
     constructor(name, defaultTrigger) {
       this[__name__] = name;
-      this[__defaultTrigger__] = defaultTrigger;
+      this[__defaultTrigger__] = defaultTrigger || null;
     }
 
     /**
@@ -52,8 +61,8 @@ DI
      * @param {Element} el The element to set the default values to.
      */
     init(el) {
-      if ($i.$(el).attr(this.attrTrigger) === undefined) {
-        $i.$(el).attr(this.attrTrigger, this[__defaultTrigger__].toString());
+      if ($(el).attr(this.attrTrigger) === undefined && this[__defaultTrigger__]) {
+        $(el).attr(this.attrTrigger, this[__defaultTrigger__].toString());
       }
 
       this.updateConfig(el);
@@ -70,14 +79,17 @@ DI
         el[__triggerMap__] = new Map();
       }
 
-      let newValue = $i.$(el).attr(this.attrTrigger);
+      let newValue = $(el).attr(this.attrTrigger);
       if (!el[__triggerMap__].has(this)
           || newValue !== el[__triggerMap__].get(this).toString()) {
         if (el[__triggerMap__].has(this)) {
           el[__triggerMap__].get(this).off(el);
         }
-        let trigger = $i.Triggers.parse($i.$(el).attr(this.attrTrigger));
-        trigger.on(el, this);
+        let trigger = Triggers.parse($(el).attr(this.attrTrigger));
+
+        if (trigger) {
+          trigger.on(el, this);
+        }
         el[__triggerMap__].set(this, trigger);
       }
     }
@@ -89,9 +101,17 @@ DI
      * @param {Element} el The element to trigger the ability on.
      */
     trigger(el) {
-      $i.Log.log(this.attrName, $i.$(el).attr('pb-id'));
       if (this.isEnabled(el)) {
+        Log.log(this.attrName, $(el).attr('pb-id'), { phase: 'before' });
         this.doTrigger(el);
+        el.dispatchEvent(new CustomEvent(
+            this.attrName,
+            {
+              detail: {
+                ability: this
+              }
+            }));
+        Log.log(this.attrName, $(el).attr('pb-id'), { phase: 'after' });
       }
     }
 
@@ -124,7 +144,7 @@ DI
      * @return {Boolean} True iff the ability is enabled on the given element.
      */
     isEnabled(el) {
-      return $i.Check($i.$(el).attr(this.attrName)).isBoolean().orUse(false);
+      return Check($(el).attr(this.attrName)).isBoolean().orUse(false);
     }
 
     /**
@@ -152,7 +172,7 @@ DI
     }
 
     /**
-     * The default trigger of the ability.
+     * The default trigger of the ability, or null if none exists.
      *
      * @property defaultTrigger
      * @type trigger.Trigger

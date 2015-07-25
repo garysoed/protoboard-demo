@@ -5,9 +5,12 @@
 <link rel="import" href="trigger/triggers.html">
 
 <script>
-DI
+DIJS
     .prefix('pb')
-    .bind('PbElement', { $: '/=', Abilities: 'ability.=' }, $i => {
+    .bind('PbElement', require => {
+
+  const $ = require('/$');
+  const Abilities = require('ability.Abilities');
 
   // Private symbols.
   const __createdPromise__ = Symbol();
@@ -30,13 +33,13 @@ DI
      * @method createdCallback
      */
     createdCallback() {
-      $i.Abilities.init(this);
+      Abilities.init(this);
       this[__createdPromise__] = new Promise(resolve => {
         this[__createdResolve__] = resolve;
       });
 
       let nameParts = this.nodeName.toLowerCase().split('-');
-      let prefix = $i.$(this).attr(ATTR_ID)
+      let prefix = $(this).attr(ATTR_ID)
           || nameParts[nameParts.length - 1];
 
       if (IDS.has(prefix)) {
@@ -45,7 +48,7 @@ DI
         IDS.set(prefix, 0);
       }
 
-      $i.$(this).attr(ATTR_ID, `${prefix}-${IDS.get(prefix)}`);
+      $(this).attr(ATTR_ID, `${prefix}-${IDS.get(prefix)}`);
     }
 
     /**
@@ -73,6 +76,30 @@ DI
      */
     get whenCreated() {
       return this[__createdPromise__];
+    }
+
+    /**
+     * pb-id of the element.
+     *
+     * @type string
+     * @property pbId
+     * @final
+     * @since 1.3.0
+     */
+    get pbId() {
+      return $(this).attr(ATTR_ID);
+    }
+
+    /**
+     * Prefix of the element's pb-id value.
+     *
+     * @type string
+     * @property pbIdPrefix
+     * @final
+     * @since 1.3.0
+     */
+    get pbIdPrefix() {
+      return this.pbId.split('-')[0];
     }
   }
 
