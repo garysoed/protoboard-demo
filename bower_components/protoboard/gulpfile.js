@@ -14,7 +14,7 @@ var uglify = require('gulp-uglify');
 var zip    = require('gulp-zip');
 
 var chalk    = require('chalk');
-var karma    = require('karma').server;
+var karma    = require('karma').Server;
 var minimist = require('minimist');
 
 var path = require('path');
@@ -24,7 +24,7 @@ var Promise = require('promise');
 
 var loadtheme = require('./loadtheme');
 
-var VERSION = '2.0.2';
+var VERSION = '3.0.0';
 
 var PARALLEL_TEST_COUNT = 2;
 
@@ -35,20 +35,32 @@ var OUT_DIR  = 'out';
 var MIN_DIR  = 'min';
 
 var KARMA_CONF = __dirname + '/karma.conf.js';
-var KARMA_CONFIG = require(KARMA_CONF);
+
 
 function runKarma(singleRun, callback) {
-  karma.start({
-    configFile: KARMA_CONF,
+  var options = minimist(process.argv.slice(2), {
+    'string': 'tests',
+    'default': {
+      'tests': '.'
+    }
+  });
+
+  var config = path.join(__dirname, options.tests, 'karma.conf.js');
+
+  console.log('Karma configs: ' + config);
+
+  var server = new karma({
+    configFile: config,
     singleRun: singleRun
   }, callback);
-};
+  server.start();
+}
 
 function compileTheme() {
   var options = minimist(process.argv.slice(2), {
     'string': 'theme',
     'default': {
-      'theme': './themes/slateblue.json'
+      'theme': './themes/cloudy_day.json'
     }
   });
   return myth({ 'variables': loadtheme(options.theme) });
@@ -62,6 +74,7 @@ function copyDeps(outDir) {
                 'bower_components/animate.css/animate.min.css',
                 'bower_components/chance/chance.js',
                 'bower_components/di-js/out/bin.min.js',
+                'bower_components/di-js/out/bin.js',
                 'bower_components/hammerjs/hammer.js',
                 'bower_components/handlebars/handlebars.js',
                 'bower_components/jquery/dist/jquery.js',
@@ -237,18 +250,18 @@ gulp.task('watch', gulp.parallel(
     gulp.series(
         'source',
         function _watchSources() {
-          gulp.watch(SRC_DIR + '/**/*.html', gulp.task('source'));
+          gulp.watch([SRC_DIR + '/**/*.html', SRC_DIR + '/*.html'], gulp.task('source'));
         }),
     gulp.series(
         'test-source',
         function _watchTestSources() {
-          gulp.watch(TEST_DIR + '/**/*.html', gulp.task('test-source'));
+          gulp.watch([TEST_DIR + '/**/*.html', TEST_DIR + '/*.html'], gulp.task('test-source'));
         })
     ));
 
 gulp.task('pack', gulp.series(
     'clean',
-    gulp.parallel('compile', 'doc'),
+    gulp.parallel('compile'),
     gulp.parallel(
         function _bump() {
           return gulp.src(['./bower.json', './package.json', './yuidoc.json'])
@@ -267,6 +280,7 @@ gulp.task('pack', gulp.series(
         'copy-deps-min'
     ),
     gulp.parallel(
+        'doc',
         function _packMin() {
           return gulp.src([MIN_DIR + '/**/*'])
               .pipe(zip('bin.min.zip'))

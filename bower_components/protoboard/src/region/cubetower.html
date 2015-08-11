@@ -18,13 +18,18 @@
 
     #root {
       outline: var(--border);
-      outline-offset: -1px;
+      outline-offset: -2px;
+      box-sizing: border-box;
       width: 100%;
       height: 100%;
       position: relative;
     }
 
-    ::content > [pb-tower-level] {
+    :host(:hover) #root {
+      outline-color: var(--color-accent);
+    }
+
+    ::content > [pb-stagger-level] {
       display: none;
     }
 
@@ -45,22 +50,21 @@
 
 <script>
 DIJS
-    .prefix('pb')
-    .constant('doc', document.currentScript.ownerDocument)
-    .with('template', require => require('doc').querySelector('template'))
-    .bind('region.CubeTower', require => {
+.constant('doc', document.currentScript.ownerDocument)
+.with('template', require => require('doc').querySelector('template'))
+.bind('pb.region.CubeTower', require => {
 
-  const $registry = require('$registry');
+  const $registry = require('pb.$registry');
 
-  const Config = require('service.Config');
+  const Config = require('pb.service.Config');
   const doc = require('doc');
-  const Droppable = require('ability.Droppable');
-  const Helpable = require('ability.Helpable');
-  const Key = require('trigger.Key');
-  const Region = require('region.Region');
-  const StaggeredDroppable = require('ability.StaggeredDroppable');
+  const Droppable = require('pb.ability.Droppable');
+  const Helpable = require('pb.ability.Helpable');
+  const Key = require('pb.trigger.Key');
+  const Region = require('pb.region.Region');
+  const StaggeredDroppable = require('pb.ability.StaggeredDroppable');
   const template = require('template');
-  const Utils = require('Utils');
+  const Utils = require('pb.Utils');
 
   const EL_NAME = 'pb-r-cubetower';
 
@@ -90,7 +94,6 @@ DIJS
    *
    * @class region.CubeTower
    * @extends region.Region
-   * @since 0.3.0
    */
   class CubeTower extends Region {
 

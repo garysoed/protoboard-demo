@@ -7,14 +7,13 @@
 
 <script>
 DIJS
-    .prefix('pb')
-    .constant('doc', document.currentScript.ownerDocument)
-    .bind('grid.Grid', require => {
+.constant('doc', document.currentScript.ownerDocument)
+.bind('pb.grid.Grid', require => {
 
+  const Check = require('pb.Check');
   const doc = require('doc');
-  const Check = require('Check');
-  const PbElement = require('PbElement');
-  const Utils = require('Utils');
+  const PbElement = require('pb.PbElement');
+  const Utils = require('pb.Utils');
 
   const ATTR_ROW = 'pb-row';
   const ATTR_COL = 'pb-col';
@@ -32,7 +31,6 @@ DIJS
    * - {{#crossLink "grid.Grid/tileTemplate:property"}}{{/crossLink}}
    *
    * @class grid.Grid
-   * @since 0.2.0
    * @extends PbElement
    */
   class Grid extends PbElement {

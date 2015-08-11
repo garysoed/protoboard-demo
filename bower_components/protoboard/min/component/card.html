@@ -25,7 +25,7 @@
   position: absolute;
   -webkit-transform-style: preserve-3d;
   transform-style: preserve-3d;
-  transition: -webkit-transform .3s;
+  -webkit-transition: -webkit-transform .3s;
   transition: transform .3s;
   z-index: -1;
 }
@@ -36,11 +36,11 @@
 }
 
 :host([tap="true"]) {
-  transition: -webkit-transform .3s;
+  -webkit-transition: -webkit-transform .3s;
   transition: transform .3s;
 }
 
-:host([flip-active="true"])::shadow #container {
+:host([flip-active="true"]) #container {
   -webkit-transform: rotateY(180deg);
   transform: rotateY(180deg);
 }
@@ -54,18 +54,24 @@
 }
 
 ::content [pb-back] {
-  background-color: #ABA5CF;
-  border: 1px solid #8982B8;
+  background-color: #607D8B;
+  border: 2px solid #263238;
   box-sizing: border-box;
+  color: white;
 }
 
 ::content [pb-front] {
-  background-color: #CBC7E2;
+  background-color: #CFD8DC;
   position: absolute;
   -webkit-transform: rotateY(180deg);
   transform: rotateY(180deg);
-  border: 5px solid #8982B8;
+  border: 5px solid #263238;
   box-sizing: border-box;
+}
+
+:host(:hover) ::content [pb-back],
+:host(:hover) ::content [pb-front] {
+  border-color: #FFD600;
 }</style>
 
   <div id="root">
@@ -76,5 +82,5 @@
   </div>
 </template>
 
-<script>"use strict";var _createClass=function(){function e(e,t){for(var r in t){var n=t[r];n.configurable=!0,n.value&&(n.writable=!0)}Object.defineProperties(e,t)}return function(t,r,n){return r&&e(t.prototype,r),n&&e(t,n),t}}(),_get=function e(t,r,n){var a=Object.getOwnPropertyDescriptor(t,r);if(void 0===a){var o=Object.getPrototypeOf(t);return null===o?void 0:e(o,r,n)}if("value"in a&&a.writable)return a.value;var i=a.get;return void 0===i?void 0:i.call(n)},_inherits=function(e,t){if("function"!=typeof t&&null!==t)throw new TypeError("Super expression must either be null or a function, not "+typeof t);e.prototype=Object.create(t&&t.prototype,{constructor:{value:e,enumerable:!1,writable:!0,configurable:!0}}),t&&(e.__proto__=t)},_classCallCheck=function(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")};DIJS.prefix("pb").constant("doc",document.currentScript.ownerDocument)["with"]("template",function(e){return e("doc").querySelector("template")}).bind("component.Card",function(e){var t=e("$registry"),r=e("trigger.Click"),n=e("component.Component"),a=e("service.Config"),o=e("doc"),i=e("ability.Helpable"),c=e("trigger.Key"),l=e("ability.Pickable"),u=e("template"),p=e("ability.Toggleable"),s=e("Utils"),f=function(e){function t(){_classCallCheck(this,t),null!=e&&e.apply(this,arguments)}return _inherits(t,e),_createClass(t,{createdCallback:{value:function(){_get(Object.getPrototypeOf(t.prototype),"createdCallback",this).call(this),this.createShadowRoot().appendChild(s.activateTemplate(u,o)),this.attachedCallback()}}}),t}(n);return f.NODE_NAME="pb-c-card",a.add(f.NODE_NAME,new i("help"),new l("pick",new c("q"),!0),new p("flip",new r,!0),new p("tap",new c("t"),!0)),t.add(f.NODE_NAME,f),f});</script>
+<script>"use strict";var _createClass=function(){function e(e,t){for(var r in t){var n=t[r];n.configurable=!0,n.value&&(n.writable=!0)}Object.defineProperties(e,t)}return function(t,r,n){return r&&e(t.prototype,r),n&&e(t,n),t}}(),_get=function e(t,r,n){var a=Object.getOwnPropertyDescriptor(t,r);if(void 0===a){var o=Object.getPrototypeOf(t);return null===o?void 0:e(o,r,n)}if("value"in a&&a.writable)return a.value;var i=a.get;return void 0===i?void 0:i.call(n)},_inherits=function(e,t){if("function"!=typeof t&&null!==t)throw new TypeError("Super expression must either be null or a function, not "+typeof t);e.prototype=Object.create(t&&t.prototype,{constructor:{value:e,enumerable:!1,writable:!0,configurable:!0}}),t&&(e.__proto__=t)},_classCallCheck=function(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")};DIJS.constant("doc",document.currentScript.ownerDocument)["with"]("template",function(e){var t=e("doc");return t.querySelector("template")}).bind("pb.component.Card",function(e){var t=e("pb.$registry"),r=e("pb.trigger.Click"),n=e("pb.component.Component"),a=e("pb.service.Config"),o=e("doc"),i=e("pb.ability.Helpable"),c=e("pb.trigger.Key"),l=e("pb.ability.Pickable"),p=e("template"),u=e("pb.ability.Toggleable"),b=e("pb.Utils"),s=function(e){function t(){_classCallCheck(this,t),null!=e&&e.apply(this,arguments)}return _inherits(t,e),_createClass(t,{createdCallback:{value:function(){_get(Object.getPrototypeOf(t.prototype),"createdCallback",this).call(this),this.createShadowRoot().appendChild(b.activateTemplate(p,o)),this.attachedCallback()}}}),t}(n);return s.NODE_NAME="pb-c-card",a.add(s.NODE_NAME,new i("help"),new l("pick",new c("q"),!0),new u("flip",new r,!0),new u("tap",new c("t"),!0)),t.add(s.NODE_NAME,s),s});</script>
 </head><body></body></html>

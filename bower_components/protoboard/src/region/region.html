@@ -10,7 +10,7 @@
   }
 
   [show-child-count]:hover::after {
-    background-color: var(--color-background-accent);
+    background-color: var(--color-background-dark);
     content: attr(child-count);
     position: absolute;
     right: 0;
@@ -18,19 +18,19 @@
     justify-content: center;
     line-height: 20px;
     width: 20px;
+    z-index: 999;
   }
 </style>
 
 <script>
 DIJS
-    .prefix('pb')
-    .constant('doc', document.currentScript.ownerDocument)
-    .with('template', require => require('doc').querySelector('template'))
-    .bind('region.Region', require => {
+.constant('doc', document.currentScript.ownerDocument)
+.with('template', require => require('doc').querySelector('template'))
+.bind('pb.region.Region', require => {
 
-  const $ = require('/$');
-  const PbElement = require('PbElement');
-  const Utils = require('Utils');
+  const $ = require('pb.$');
+  const PbElement = require('pb.PbElement');
+  const Utils = require('pb.Utils');
 
   const __onMutation__ = Symbol('onMutation');
   const __mutationObserver__ = Symbol();

@@ -7,8 +7,6 @@
 <script>"use strict";
 
 DIJS.bind("pb.t", function (require) {
-  var _ = require("_");
-
   var TestUtil = {
     createFakeAbility: function createFakeAbility(name) {
       var trigger = arguments[1] === undefined ? this.createFakeTrigger("" + name + "-trigger") : arguments[1];
@@ -20,20 +18,29 @@ DIJS.bind("pb.t", function (require) {
           getTrigger: function () {
             return trigger;
           },
-          init: _.spiedFunction(),
-          isEnabled: _.spiedFunction(),
-          updateConfig: _.spiedFunction(),
-          trigger: _.spiedFunction()
+          init: function init() {},
+          isEnabled: function isEnabled() {},
+          updateConfig: function updateConfig() {},
+          trigger: function trigger() {}
         };
       })();
     },
 
     createFakeEvents: function createFakeEvents() {
-      var fake = {};
-      fake.of = _.spiedFunction().overrideReturn(fake);
-      fake.on = _.spiedFunction().overrideReturn(fake);
-      fake.off = _.spiedFunction().overrideReturn(fake);
-      return fake;
+      var fakeEvents = {
+        of: function of() {
+          return fakeEvents;
+        },
+
+        on: function on() {
+          return fakeEvents;
+        },
+
+        off: function off() {
+          return fakeEvents;
+        }
+      };
+      return fakeEvents;
     },
 
     createFakeTrigger: function createFakeTrigger(name) {
@@ -41,16 +48,69 @@ DIJS.bind("pb.t", function (require) {
         toString: function toString() {
           return name;
         },
-        on: _.spiedFunction(),
-        off: _.spiedFunction()
+        on: function on() {},
+        off: function off() {}
       };
+    },
+
+    createFakeJQuery: function createFakeJQuery() {
+      var fakeJQuery = (function (_fakeJQuery) {
+        var _fakeJQueryWrapper = function fakeJQuery(_x) {
+          return _fakeJQuery.apply(this, arguments);
+        };
+
+        _fakeJQueryWrapper.toString = function () {
+          return _fakeJQuery.toString();
+        };
+
+        return _fakeJQueryWrapper;
+      })(function (el) {
+        fakeJQuery.el = el;
+        return fakeJQuery;
+      });
+
+      fakeJQuery.attr = function () {};
+      fakeJQuery.replaceWith = function () {};
+      return fakeJQuery;
+    },
+
+    createFakePromise: function createFakePromise() {
+      var Promise = {
+        all: function all() {
+          return Promise;
+        },
+
+        then: function then(fn) {
+          Promise.lastHandler = fn;
+          return Promise;
+        }
+      };
+
+      return Promise;
     },
 
     getSymbol: function getSymbol(obj, name) {
       return Object.getOwnPropertySymbols(obj).find(function (symbol) {
         return "Symbol(" + name + ")" === symbol.toString();
       });
+    },
+
+    getPrivateProperty: function getPrivateProperty(obj, name) {
+      return obj[this.getSymbol(obj, name)];
+    },
+
+    getPrivateMethod: function getPrivateMethod(obj, name) {
+      return obj[this.getSymbol(obj.constructor.prototype, name)].bind(obj);
     }
+  };
+
+  TestUtil.FakeMutationObserver = function (handler) {
+    TestUtil.FakeMutationObserver.instance.handler = handler;
+    return TestUtil.FakeMutationObserver.instance;
+  };
+
+  TestUtil.FakeMutationObserver.instance = {
+    observe: function () {}
   };
 
   return TestUtil;

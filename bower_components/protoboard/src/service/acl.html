@@ -7,31 +7,10 @@
 
 <script>
 DIJS
-    .prefix('pb')
-    .bind('service.Acl', (require, optional) => {
+.bind('pb.service.Acl.__group__', require => {
 
-  const Check = require('Check');
-  const State = require('service.State');
-  const Utils = require('Utils');
-
-  const TEST_MODE = optional('/TEST_MODE');
-
-  const ATTR_PREFIX = 'pb-acl-';
-  const ATTR_CURRENT_PLAYER = 'currentPlayer';
-
-  // Private symbols.
-  const __enabledMap__ = Symbol('enabledMap');
   const __members__ = Symbol();
   const __name__ = Symbol();
-  const __observer__ = Symbol();
-  const __parent__ = Symbol();
-  const __registeredEls__ = Symbol();
-
-  const __onMutation__ = Symbol();
-  const __reset__ = Symbol();
-  const __update__ = Symbol('update');
-
-  const GROUPS = new Map();
 
   class Group {
 
@@ -80,6 +59,30 @@ DIJS
     }
   }
 
+  return Group;
+})
+.bind('pb.service.Acl.__ctor__', require => {
+
+  const Check = require('pb.Check');
+  const Group = require('pb.service.Acl.__group__');
+  const MutationObserver = require('MutationObserver');
+  const State = require('pb.service.State');
+  const Utils = require('pb.Utils');
+
+  const ATTR_PREFIX = 'pb-acl-';
+  const ATTR_CURRENT_PLAYER = 'currentPlayer';
+
+  // Private symbols.
+  const __enabledMap__ = Symbol('enabledMap');
+  const __groups__ = Symbol('groups');
+  const __observer__ = Symbol();
+  const __parent__ = Symbol();
+  const __registeredEls__ = Symbol();
+
+  const __onMutation__ = Symbol();
+  const __reset__ = Symbol();
+  const __update__ = Symbol('update');
+
   /**
    * Service that manages ACLs in the app. This allows you to show element differently depending on
    * the current player. To use this, you first need to register the elements to the service. Then,
@@ -88,10 +91,12 @@ DIJS
    * <div id="acl" pb-acl-readable="player1 player2"></div>
    * ```
    * ```javascript
-   *   DIJS.run(['pb.service.Acl', 'pb.=', function(AclService, Bootstrap) {
-   *     AclService.registerElement(document.querySelector('#acl'));
-   *     Bootstrap.run(document);
-   *   }]);
+   *   Protoboard
+   *       .setup(function(require) {
+   *         var AclService = require('pb.service.Acl');
+   *         AclService.registerElement(document.querySelector('#acl'));
+   *       })
+   *       .run(document);
    * ```
    *
    * In the example above, the DIJSV element will be readable if and only if the current player is set
@@ -108,13 +113,14 @@ DIJS
    * <div id="acl" pb-acl-readable="corporation"></div>
    * ```
    * ```javascript
-   *   DIJS.run(['pb.service.Acl', 'pb.=', function(AclService, Bootstrap) {
-   *     AclService
-   *         .registerElement(document.querySelector('#acl'))
-   *         .addGroup('corporation', 'weyland', 'jinteki', 'nbn');
-   *
-   *     Bootstrap.run(document);
-   *   }]);
+   *   Protoboard
+   *       .setup(function(require) {
+   *         var AclService = require('pb.service.Acl');
+   *         AclService
+   *             .registerElement(document.querySelector('#acl'))
+   *             .addGroup('corporation', 'weyland', 'jinteki', 'nbn');
+   *       })
+   *       .run(document);
    * ```
    * The element above will be readable if the current player is a member of the corporation group.
    * Groups can contain other groups as members.
@@ -140,18 +146,13 @@ DIJS
    *
    * @class service.Acl
    * @static
-   * @since 0.3.0
    */
-  const Service = {
+  class Service {
 
-    /**
-     * Set of registered elements.
-     *
-     * @property __registeredEls__
-     * @type Set
-     * @private
-     */
-    [__registeredEls__]: new Set(),
+    constructor() {
+      this[__groups__] = new Map();
+      this[__registeredEls__] = new Set();
+    }
 
     /**
      * Resets the cache in the given element.
@@ -164,7 +165,7 @@ DIJS
       if (el[__enabledMap__]) {
         el[__enabledMap__].clear();
       }
-    },
+    }
 
     /**
      * Updates the cache for the given element.
@@ -187,8 +188,8 @@ DIJS
         let enabled = (allowedPlayers === null)
             || allowedPlayers.length === 0
             || allowedPlayers.some(player => {
-              return GROUPS.has(player)
-                  ? GROUPS.get(player).contains(this.currentPlayer)
+              return this[__groups__].has(player)
+                  ? this[__groups__].get(player).contains(this.currentPlayer)
                   : player === this.currentPlayer;
             });
 
@@ -198,7 +199,7 @@ DIJS
               el.classList.toggle(`pb-acl-${name}`, enabled);
             });
       }
-    },
+    }
 
     /**
      * Handler called when attribute on an element has been changed.
@@ -215,7 +216,7 @@ DIJS
           this[__update__](record.target);
         }
       }
-    },
+    }
 
     /**
      * Registers the given element to watch for ACL changes.
@@ -232,7 +233,7 @@ DIJS
       }
       this[__update__](el);
       return this;
-    },
+    }
 
     /**
      * @method isActionEnabled
@@ -257,7 +258,7 @@ DIJS
       return Promise
           .all([parentPromise, currentEnabled])
           .then(([parent, current]) => parent && current);
-    },
+    }
 
     /**
      * Creates or updates a group to the service.
@@ -270,15 +271,15 @@ DIJS
     addGroup(name, ...members) {
       let group = new Group(name);
       for (let member of members) {
-        if (GROUPS.has(member)) {
-          group.add(GROUPS.get(member));
+        if (this[__groups__].has(member)) {
+          group.add(this[__groups__].get(member));
         } else {
           group.add(member);
         }
       }
-      GROUPS.set(name, group);
+      this[__groups__].set(name, group);
       return this;
-    },
+    }
 
     /**
      * The current player.
@@ -288,7 +289,7 @@ DIJS
      */
     get currentPlayer() {
       return State.get(ATTR_CURRENT_PLAYER);
-    },
+    }
     set currentPlayer(player) {
       State.put(ATTR_CURRENT_PLAYER, player);
 
@@ -304,13 +305,12 @@ DIJS
         this[__update__](el);
       }
     }
-  };
-
-  if (TEST_MODE) {
-    Service.Group = Group;
-    Service.GROUPS = GROUPS;
   }
 
   return Service;
+})
+.bind('pb.service.Acl', require => {
+  const Service = require('pb.service.Acl.__ctor__');
+  return new Service();
 });
 </script>

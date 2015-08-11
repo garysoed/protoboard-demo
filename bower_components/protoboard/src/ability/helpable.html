@@ -61,19 +61,17 @@
 
 <script>
 DIJS
-    .prefix('pb')
-    .constant('doc', document.currentScript.ownerDocument)
-    .with('template', require => require('doc').querySelector('template'))
-    .bind('ability.Helpable', require => {
+.constant('doc', document.currentScript.ownerDocument)
+.bind('pb.ability.Helpable', require => {
 
-  const $registry = require('$registry');
-  const Abilities = require('ability.Abilities');
-  const Ability = require('ability.Ability');
+  const $registry = require('pb.$registry');
   const doc = require('doc');
-  const Events = require('Events');
-  const Key = require('trigger.Key');
-  const template = require('template');
-  const Utils = require('Utils');
+  const Abilities = require('pb.ability.Abilities');
+  const Ability = require('pb.ability.Ability');
+  const Events = require('pb.Events');
+  const Key = require('pb.trigger.Key');
+  const template = doc.querySelector('template');
+  const Utils = require('pb.Utils');
 
   let displayEl = null;
 

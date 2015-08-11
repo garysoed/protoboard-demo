@@ -3,9 +3,13 @@ table {
   border-collapse: collapse;
 }
 
+tr:not(:last-child) {
+  border-bottom: var(--border);
+}
+
 td {
-  border: var(--border);
-  padding: 10px;
+  border: none;
+  padding: 1em 1em 2em 1em;
   vertical-align: top;
 }
 
@@ -14,8 +18,8 @@ td:first-child {
 }
 
 td.collapse {
-  background-color: var(--color-normal);
-  color: white;
+  background-color: var(--color-primary);
+  color: var(--color-light-primary);
 }
 
 td.collapse ~ td {
@@ -43,13 +47,18 @@ thead {
 }
 
 thead td {
-  background-color: var(--color-normal);
-  color: var(--color-font-highlight);
-  padding-left: 20px;
+  background-color: var(--color-primary);
+  color: var(--color-background);
+  padding-left: 2em;
 }
 
 thead.collapse + tbody {
   display: none;
+}
+
+thead h2 {
+  margin-top: 1em;
+  margin-bottom: 1em;
 }
 
 col.name {

@@ -9,6 +9,7 @@
     <link rel="import" href="bower_components/protoboard/min/grid/hexgrid.html">
     <link rel="import" href="bower_components/protoboard/min/grid/rectgrid.html">
     <link rel="import" href="bower_components/protoboard/min/grid/trianglegrid.html">
+    <link rel="import" href="bower_components/protoboard/min/protoboard.html">
     <link rel="import" href="bower_components/protoboard/min/region/bag.html">
     <link rel="import" href="bower_components/protoboard/min/region/cubetower.html">
     <link rel="import" href="bower_components/protoboard/min/region/deck.html">
@@ -29,6 +30,14 @@
     <link rel="stylesheet" type="text/css" href="out/token.css">
 
     <style>
+      body {
+        margin: 0;
+      }
+
+      body > p {
+        margin: 2em;
+      }
+
       .front {
         line-height: 100px;
         text-align: center;
@@ -187,6 +196,7 @@
             A bag is a collection of components. You cannot see the component until you drag one out
             of it.
           </td>
+          <td></td>
         </tr>
 
         <tr>
@@ -367,6 +377,7 @@
             over its parent element. This is useful to display more details of a component, while
             preserving screen real estate. See the Card for an example.
           </td>
+          <td></td>
         </tr>
         <tr>
           <td>Shapes</td>
@@ -380,6 +391,7 @@
             Use <code>pb-u-shape</code> to create predefined shapes. You can also customize them
             using CSS.
           </td>
+          <td></td>
         </tr>
         <tr>
           <td>Template</td>
@@ -405,45 +417,47 @@
           <td>
             You can use Handlebar templates to generate elements easily.
           </td>
+          <td></td>
         </tr>
       </tbody>
     </table>
 
     <script>
-      DIJS.run(function(require) {
-        var Bootstrap = require('pb.Bootstrap');
-        var Template = require('pb.service.Template');
+      Protoboard
+          .setup(function(require) {
+            var Template = require('pb.service.Template');
 
-        Template
-            .addPartial('card', document.querySelector('template#card'))
-            .addData('cards', [
-              { name: 'Mrs Peacock', color: 'blue' },
-              { name: 'Miss Scarlet', color: 'red' },
-              { name: 'Prof Plum', color: 'purple' },
-              { name: 'Rev Green', color: 'green' },
-              { name: 'Colonel Mustard', color: 'gold' },
-              { name: 'Mrs. White', color: 'grey' }
-            ])
-            .addData('game', {
-              name: 'Clue',
-              year: 1949
-            });
-        Bootstrap.run(document);
-      });
+            Template
+                .addPartial('card', document.querySelector('template#card'))
+                .addData('cards', [
+                  { name: 'Mrs Peacock', color: 'blue' },
+                  { name: 'Miss Scarlet', color: 'red' },
+                  { name: 'Prof Plum', color: 'purple' },
+                  { name: 'Rev Green', color: 'green' },
+                  { name: 'Colonel Mustard', color: 'gold' },
+                  { name: 'Mrs. White', color: 'grey' }
+                ])
+                .addData('game', {
+                  name: 'Clue',
+                  year: 1949
+                });
+          })
+          .run(document)
+          .then(function(require) {
+            var headers = document.querySelectorAll('thead');
+            for (var i = 0; i < headers.length; i++) {
+              headers.item(i).addEventListener('click', function() {
+                this.classList.toggle('collapse');
+              });
+            }
 
-      var headers = document.querySelectorAll('thead');
-      for (var i = 0; i < headers.length; i++) {
-        headers.item(i).addEventListener('click', function() {
-          this.classList.toggle('collapse');
-        });
-      }
-
-      var rowHeaders = document.querySelectorAll('td:first-child');
-      for (var i = 0; i < rowHeaders.length; i++) {
-        rowHeaders.item(i).addEventListener('click', function() {
-          this.classList.toggle('collapse');
-        });
-      }
+            var rowHeaders = document.querySelectorAll('td:first-child');
+            for (var i = 0; i < rowHeaders.length; i++) {
+              rowHeaders.item(i).addEventListener('click', function() {
+                this.classList.toggle('collapse');
+              });
+            }
+          });
     </script>
   </body>
 </html>

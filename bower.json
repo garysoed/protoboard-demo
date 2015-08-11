@@ -20,6 +20,6 @@
     "tests"
   ],
   "dependencies": {
-    "protoboard": "~2.0.0"
+    "protoboard": "~3.0.0"
   }
 }

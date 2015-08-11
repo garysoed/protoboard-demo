@@ -55,16 +55,15 @@
 
 <script>
 DIJS
-    .prefix('pb')
-    .constant('doc', document.currentScript.ownerDocument)
-    .with('templateMain', require => require('doc').querySelector('template#main'))
-    .with('templateRow', require => require('doc').querySelector('template#row'))
-    .with('templateTile', require => require('doc').querySelector('template#tile'))
-    .bind('grid.TriangleGrid', require => {
+.constant('doc', document.currentScript.ownerDocument)
+.with('templateMain', require => require('doc').querySelector('template#main'))
+.with('templateRow', require => require('doc').querySelector('template#row'))
+.with('templateTile', require => require('doc').querySelector('template#tile'))
+.bind('pb.grid.TriangleGrid', require => {
 
-  const $registry = require('$registry');
-  const Config = require('service.Config');
-  const Grid = require('grid.Grid');
+  const $registry = require('pb.$registry');
+  const Config = require('pb.service.Config');
+  const Grid = require('pb.grid.Grid');
   const templateMain = require('templateMain');
   const templateRow = require('templateRow');
   const templateTile = require('templateTile');
@@ -92,7 +91,6 @@ DIJS
    * You can use {{#crossLink "ui.Shape"}}`<pb-u-shape>`{{/crossLink}} to create triangle shapes.
    *
    * @class grid.TriangleGrid
-   * @since 0.2.0
    * @extends grid.Grid
    */
   class TriangleGrid extends Grid {

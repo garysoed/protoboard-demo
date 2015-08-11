@@ -9,6 +9,13 @@
 <link rel="import" href="utils.html">
 
 <template>
+  <style>
+    :host(:hover) > *,
+    :host(:hover) > * {
+      outline: 2px solid var(--color-accent);
+      outline-offset: -2px;
+    }
+  </style>
   <div id="root">
     <content></content>
   </div>
@@ -16,20 +23,22 @@
 
 <script>
 DIJS
-    .prefix('pb')
-    .constant('doc', document.currentScript.ownerDocument)
-    .with('template', require => require('doc').querySelector('template'))
-    .bind('component.Token', require => {
-
-  const $registry = require('$registry');
-  const Component = require('component.Component');
-  const Config = require('service.Config');
+.constant('doc', document.currentScript.ownerDocument)
+.with('template', require => {
   const doc = require('doc');
-  const Helpable = require('ability.Helpable');
-  const Key = require('trigger.Key');
-  const Pickable = require('ability.Pickable');
+  return doc.querySelector('template');
+})
+.bind('pb.component.Token', require => {
+
+  const $registry = require('pb.$registry');
+  const Component = require('pb.component.Component');
+  const Config = require('pb.service.Config');
+  const doc = require('doc');
+  const Helpable = require('pb.ability.Helpable');
+  const Key = require('pb.trigger.Key');
+  const Pickable = require('pb.ability.Pickable');
   const template = require('template');
-  const Utils = require('Utils');
+  const Utils = require('pb.Utils');
 
   /**
    * A simple movable component with only one state. Examples of token:

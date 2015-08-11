@@ -8,13 +8,12 @@
 
 <script type="text/javascript">
 DIJS
-    .prefix('pb')
-    .bind('ability.OrderedDroppable', require => {
+.bind('pb.ability.OrderedDroppable', require => {
 
-  const Droppable = require('ability.Droppable');
-  const Key = require('trigger.Key');
-  const Move = require('service.Move');
-  const Utils = require('Utils');
+  const Droppable = require('pb.ability.Droppable');
+  const Key = require('pb.trigger.Key');
+  const Move = require('pb.service.Move');
+  const Utils = require('pb.Utils');
 
   // Private constants
   const __isVertical__ = Symbol();
@@ -27,7 +26,6 @@ DIJS
    *
    * @class ability.OrderedDroppable
    * @extends ability.Droppable
-   * @since 0.3.1
    */
   class OrderedDroppable extends Droppable {
 
